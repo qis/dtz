@@ -103,6 +103,7 @@ bool initialize() noexcept {
   }
   return true;
 }
+
 #else
 
 bool initialize() noexcept {
