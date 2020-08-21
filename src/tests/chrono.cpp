@@ -555,15 +555,20 @@ TEST(dtz, zoned_time_operators) {
   {
     const auto ymd = dtz::year{ 2018 } / dtz::month{ 3 } / dtz::day{ 25 };
     const auto tod = 1h + 30min;
-    const auto zon = dtz::make_zoned(std::string_view{ "Europe/Berlin" }, dtz::local_days{ ymd } + tod, dtz::choose::earliest);
+    const auto zon = dtz::make_zoned("Europe/Berlin", dtz::local_days{ ymd } + tod, dtz::choose::earliest);
+    EXPECT_EQ(zon.get_local_time() - dtz::make_zoned("UTC", zon.get_sys_time()).get_local_time(), 1h);
     EXPECT_EQ(dtz::tod(zon + 1h).to_duration(), 3h + 30min);
+    EXPECT_EQ(dtz::tod((zon + 1h) - 1h).to_duration(), 1h + 30min);
   }
   {
     const auto ymd = dtz::year{ 2018 } / dtz::month{ 10 } / dtz::day{ 28 };
     const auto tod = 1h + 30min;
-    const auto zon = dtz::make_zoned(std::string_view{ "Europe/Berlin" }, dtz::local_days{ ymd } + tod, dtz::choose::earliest);
-    ASSERT_EQ(zon, dtz::make_zoned(std::string_view{ "Europe/Berlin" }, dtz::local_days{ ymd } + tod, dtz::choose::latest));
+    const auto zon = dtz::make_zoned("Europe/Berlin", dtz::local_days{ ymd } + tod, dtz::choose::earliest);
+    ASSERT_EQ(zon, dtz::make_zoned("Europe/Berlin", dtz::local_days{ ymd } + tod, dtz::choose::latest));
+    EXPECT_EQ(zon.get_local_time() - dtz::make_zoned("UTC", zon.get_sys_time()).get_local_time(), 2h);
     EXPECT_EQ(dtz::tod(zon + 1h).to_duration(), 2h + 30min);
     EXPECT_EQ(dtz::tod(zon + 2h).to_duration(), 2h + 30min);
+    EXPECT_EQ(dtz::tod((zon + 1h) - 1h).to_duration(), 1h + 30min);
+    EXPECT_EQ(dtz::tod((zon + 2h) - 2h).to_duration(), 1h + 30min);
   }
 }

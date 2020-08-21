@@ -480,7 +480,6 @@ template <ValidZonedTimeDuration Duration>
   return zoned_time<Duration>{ locate_zone(zone), now<Duration>() };
 }
 
-
 // clang-format on
 
 // ====================================================================================================================
@@ -548,6 +547,11 @@ template <dtz::ZonedTime ZonedTime, dtz::Duration FromDuration>
 [[nodiscard]] inline constexpr auto operator+(const ZonedTime& zt, const FromDuration& d) noexcept {
   using ToDuration = std::common_type_t<FromDuration, typename dtz::is_zoned_time<ZonedTime>::duration>;
   return dtz::zoned_time<ToDuration>{ zt.get_time_zone(), dtz::cast<ToDuration>(zt.get_sys_time() + d) };
+}
+
+template <dtz::ZonedTime ZonedTime, dtz::Duration FromDuration>
+[[nodiscard]] inline constexpr auto operator-(const ZonedTime& zt, const FromDuration& d) noexcept {
+  return operator+(zt, -d);
 }
 
 }  // namespace date
