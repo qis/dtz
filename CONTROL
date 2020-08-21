@@ -1,0 +1,5 @@
+Source: dtz
+Version: 0.1.0
+Homepage: https://github.com/qis/dtz
+Description: C++20 convenience library for std::chrono with std::format support.
+Build-Depends: date, fmt
