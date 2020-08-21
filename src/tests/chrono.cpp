@@ -1,8 +1,6 @@
 #include <dtz/chrono.hpp>
 #include <gtest/gtest.h>
 
-#if 0
-
 using namespace dtz::literals;
 
 TEST(dtz, concepts) {
@@ -569,5 +567,3 @@ TEST(dtz, zoned_time_operators) {
     EXPECT_EQ(dtz::tod(zon + 2h).to_duration(), 2h + 30min);
   }
 }
-
-#endif
