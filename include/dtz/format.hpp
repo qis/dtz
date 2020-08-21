@@ -48,22 +48,22 @@ inline auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const LocalTime
   const auto ud = static_cast<unsigned int>(ymd.day());
   if constexpr (std::ratio_less_equal_v<Period, hours::period>) {
     const auto sec = cast<seconds>(tpd);
-    const auto tod = time_of_day<Duration>{ cast<Duration>(tp - sec) }.to_duration();
-    const auto h = cast<hours>(tod);
+    const auto hms = hh_mm_ss<Duration>{ cast<Duration>(tp - sec) }.to_duration();
+    const auto h = cast<hours>(hms);
     if constexpr (std::ratio_less_equal_v<Period, minutes::period>) {
-      const auto m = cast<minutes>(tod - h);
+      const auto m = cast<minutes>(hms - h);
       if constexpr (std::ratio_less_equal_v<Period, seconds::period>) {
-        const auto s = cast<seconds>(tod - h - m);
+        const auto s = cast<seconds>(hms - h - m);
         if constexpr (std::ratio_less_equal_v<Period, nanoseconds::period>) {
-          const auto ns = cast<nanoseconds>(tod - h - m - s);
+          const auto ns = cast<nanoseconds>(hms - h - m - s);
           constexpr auto format = "{}-{:02}-{:02} {:02}:{:02}:{:02}.{:09}";
           return fmt::format_to(out, format, iy, um, ud, h.count(), m.count(), s.count(), ns.count());
         } else if constexpr (std::ratio_less_equal_v<Period, microseconds::period>) {
-          const auto us = cast<microseconds>(tod - h - m - s);
+          const auto us = cast<microseconds>(hms - h - m - s);
           constexpr auto format = "{}-{:02}-{:02} {:02}:{:02}:{:02}.{:06}";
           return fmt::format_to(out, format, iy, um, ud, h.count(), m.count(), s.count(), us.count());
         } else if constexpr (std::ratio_less_equal_v<Period, milliseconds::period>) {
-          const auto ms = cast<milliseconds>(tod - h - m - s);
+          const auto ms = cast<milliseconds>(hms - h - m - s);
           constexpr auto format = "{}-{:02}-{:02} {:02}:{:02}:{:02}.{:03}";
           return fmt::format_to(out, format, iy, um, ud, h.count(), m.count(), s.count(), ms.count());
         } else {
@@ -94,8 +94,8 @@ inline constexpr auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const
 }
 
 template <std::size_t SIZE, Duration Duration>
-inline constexpr auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const time_of_day<Duration>& tod) {
-  return format_to(out, cast<Duration>(tod));
+inline constexpr auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const hh_mm_ss<Duration>& hms) {
+  return format_to(out, cast<Duration>(hms));
 }
 
 template <std::size_t SIZE>

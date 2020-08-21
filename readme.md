@@ -8,3 +8,75 @@ This library is meant to be installed as vcpkg ports overlay.
 git clone https://github.com/qis/dtz
 vcpkg install --overlay-ports=dtz dtz
 ```
+
+## Customization
+The standard does not implement operators that have several coflicting but valid meanings.
+
+<details>
+<summary><b><code>dtz::weekday</code> comparison</b></summary>
+
+The day of the week can start with 
+
+To enable comparison of `dtz::weekday`, the operators must be implemented in the `date` namespace:
+
+```cpp
+namespace date {
+
+[[nodiscard]] inline constexpr bool operator<=(const weekday& lhs, const weekday& rhs) noexcept {
+  return lhs.iso_encoding() <= rhs.iso_encoding();
+}
+
+[[nodiscard]] inline constexpr bool operator>=(const weekday& lhs, const weekday& rhs) noexcept {
+  return lhs.iso_encoding() >= rhs.iso_encoding();
+}
+
+[[nodiscard]] inline constexpr bool operator<(const weekday& lhs, const weekday& rhs) noexcept {
+  return lhs.iso_encoding() < rhs.iso_encoding();
+}
+
+[[nodiscard]] inline constexpr bool operator>(const weekday& lhs, const weekday& rhs) noexcept {
+  return lhs.iso_encoding() > rhs.iso_encoding();
+}
+
+}  // namespace date
+```
+
+</details>
+
+<details>
+<summary><b>Visual Studio Code</b></summary>
+
+To enable comparison of `dtz::time_of_day`, the operators must be implemented in the `date` namespace:
+
+```cpp
+namespace date {
+
+template <dtz::HHMMSS LHS, dtz::HHMMSS RHS>
+[[nodiscard]] inline constexpr bool operator==(const LHS& lhs, const RHS& rhs) noexcept {
+  return lhs.to_duration() == rhs.to_duration();
+}
+
+template <dtz::HHMMSS LHS, dtz::HHMMSS RHS>
+[[nodiscard]] inline constexpr bool operator<=(const LHS& lhs, const RHS& rhs) noexcept {
+  return lhs.to_duration() <= rhs.to_duration();
+}
+
+template <dtz::HHMMSS LHS, dtz::HHMMSS RHS>
+[[nodiscard]] inline constexpr bool operator>=(const LHS& lhs, const RHS& rhs) noexcept {
+  return lhs.to_duration() >= rhs.to_duration();
+}
+
+template <dtz::HHMMSS LHS, dtz::HHMMSS RHS>
+[[nodiscard]] inline constexpr bool operator<(const LHS& lhs, const RHS& rhs) noexcept {
+  return lhs.to_duration() < rhs.to_duration();
+}
+
+template <dtz::HHMMSS LHS, dtz::HHMMSS RHS>
+[[nodiscard]] inline constexpr bool operator>(const LHS& lhs, const RHS& rhs) noexcept {
+  return lhs.to_duration() > rhs.to_duration();
+}
+
+}  // namespace date
+```
+
+</details>

@@ -38,7 +38,7 @@ template <ZonedTime ZonedTime>
 struct traits<ZonedTime> : traits<local_time<typename ZonedTime::duration>> {};
 
 template <Duration Duration>
-struct traits<time_of_day<Duration>> {
+struct traits<hh_mm_ss<Duration>> {
   // clang-format off
   // 18 | 00:00:00.000000000
   // 15 | 00:00:00.000000

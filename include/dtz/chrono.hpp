@@ -282,27 +282,27 @@ template <Clock FromClock, ValidZonedTimeDuration FromValidZonedTimeDuration>
 
 
 // ====================================================================================================================
-// TimeOfDay
+// HHMMSS
 // ====================================================================================================================
 
-using date::time_of_day;
+using date::hh_mm_ss;
 
 template <typename T>
-struct is_time_of_day : std::false_type {};
+struct is_hh_mm_ss : std::false_type {};
 
 template <Duration Duration>
-struct is_time_of_day<time_of_day<Duration>> {
+struct is_hh_mm_ss<hh_mm_ss<Duration>> {
   static constexpr bool value = std::ratio_less_v<typename Duration::period, days::period>;
 };
 
 template <typename T>
-inline constexpr bool is_time_of_day_v = is_time_of_day<T>::value;
+inline constexpr bool is_hh_mm_ss_v = is_hh_mm_ss<T>::value;
 
 template <typename T>
-concept TimeOfDay = is_time_of_day_v<T>;
+concept HHMMSS = is_hh_mm_ss_v<T>;
 
 template <typename T>
-concept ValidTimeOfDayDuration = TimeOfDay<time_of_day<T>>;
+concept ValidHHMMSSDuration = HHMMSS<hh_mm_ss<T>>;
 
 
 // ====================================================================================================================
@@ -402,8 +402,8 @@ template <Clock ToClock, ZonedTime FromZonedTime>
 }
 
 template <Duration ToDuration, Duration FromDuration>
-[[nodiscard]] inline constexpr auto cast(const time_of_day<FromDuration>& tod) {
-  return cast<ToDuration>(tod.to_duration());
+[[nodiscard]] inline constexpr auto cast(const hh_mm_ss<FromDuration>& hms) {
+  return cast<ToDuration>(hms.to_duration());
 }
 
 template <Duration ToDuration>
@@ -428,19 +428,19 @@ template <ZonedTime FromZonedTime>
 }
 
 
-template <ValidTimeOfDayDuration FromValidTimeOfDayDuration>
-[[nodiscard]] inline constexpr auto tod(const FromValidTimeOfDayDuration& d) {
-  return time_of_day<FromValidTimeOfDayDuration>{ d };
+template <ValidHHMMSSDuration FromValidHHMMSSDuration>
+[[nodiscard]] inline constexpr auto hms(const FromValidHHMMSSDuration& d) {
+  return hh_mm_ss<FromValidHHMMSSDuration>{ d };
 }
 
-template <ClockOrLocal FromClockOrLocal, ValidTimeOfDayDuration FromValidTimeOfDayDuration>
-[[nodiscard]] inline constexpr auto tod(const time_point<FromClockOrLocal, FromValidTimeOfDayDuration>& tp) {
-  return time_of_day<FromValidTimeOfDayDuration>{ tp - cast<days>(tp) };
+template <ClockOrLocal FromClockOrLocal, ValidHHMMSSDuration FromValidHHMMSSDuration>
+[[nodiscard]] inline constexpr auto hms(const time_point<FromClockOrLocal, FromValidHHMMSSDuration>& tp) {
+  return hh_mm_ss<FromValidHHMMSSDuration>{ tp - cast<days>(tp) };
 }
 
-template <ValidTimeOfDayDuration FromValidTimeOfDayDuration>
-[[nodiscard]] inline constexpr auto tod(const zoned_time<FromValidTimeOfDayDuration>& zt) {
-  return tod(cast<FromValidTimeOfDayDuration>(cast<local_t>(zt)));
+template <ValidHHMMSSDuration FromValidHHMMSSDuration>
+[[nodiscard]] inline constexpr auto hms(const zoned_time<FromValidHHMMSSDuration>& zt) {
+  return hms(cast<FromValidHHMMSSDuration>(cast<local_t>(zt)));
 }
 
 
@@ -499,59 +499,3 @@ using namespace date::literals;
 
 }  // namespace literals
 }  // namespace dtz
-
-namespace date {
-
-[[nodiscard]] inline constexpr bool operator<=(const weekday& lhs, const weekday& rhs) noexcept {
-  return lhs.iso_encoding() <= rhs.iso_encoding();
-}
-
-[[nodiscard]] inline constexpr bool operator>=(const weekday& lhs, const weekday& rhs) noexcept {
-  return lhs.iso_encoding() >= rhs.iso_encoding();
-}
-
-[[nodiscard]] inline constexpr bool operator<(const weekday& lhs, const weekday& rhs) noexcept {
-  return lhs.iso_encoding() < rhs.iso_encoding();
-}
-
-[[nodiscard]] inline constexpr bool operator>(const weekday& lhs, const weekday& rhs) noexcept {
-  return lhs.iso_encoding() > rhs.iso_encoding();
-}
-
-template <dtz::TimeOfDay LHS, dtz::TimeOfDay RHS>
-[[nodiscard]] inline constexpr bool operator==(const LHS& lhs, const RHS& rhs) noexcept {
-  return lhs.to_duration() == rhs.to_duration();
-}
-
-template <dtz::TimeOfDay LHS, dtz::TimeOfDay RHS>
-[[nodiscard]] inline constexpr bool operator<=(const LHS& lhs, const RHS& rhs) noexcept {
-  return lhs.to_duration() <= rhs.to_duration();
-}
-
-template <dtz::TimeOfDay LHS, dtz::TimeOfDay RHS>
-[[nodiscard]] inline constexpr bool operator>=(const LHS& lhs, const RHS& rhs) noexcept {
-  return lhs.to_duration() >= rhs.to_duration();
-}
-
-template <dtz::TimeOfDay LHS, dtz::TimeOfDay RHS>
-[[nodiscard]] inline constexpr bool operator<(const LHS& lhs, const RHS& rhs) noexcept {
-  return lhs.to_duration() < rhs.to_duration();
-}
-
-template <dtz::TimeOfDay LHS, dtz::TimeOfDay RHS>
-[[nodiscard]] inline constexpr bool operator>(const LHS& lhs, const RHS& rhs) noexcept {
-  return lhs.to_duration() > rhs.to_duration();
-}
-
-template <dtz::ZonedTime ZonedTime, dtz::Duration FromDuration>
-[[nodiscard]] inline constexpr auto operator+(const ZonedTime& zt, const FromDuration& d) noexcept {
-  using ToDuration = std::common_type_t<FromDuration, typename dtz::is_zoned_time<ZonedTime>::duration>;
-  return dtz::zoned_time<ToDuration>{ zt.get_time_zone(), dtz::cast<ToDuration>(zt.get_sys_time() + d) };
-}
-
-template <dtz::ZonedTime ZonedTime, dtz::Duration FromDuration>
-[[nodiscard]] inline constexpr auto operator-(const ZonedTime& zt, const FromDuration& d) noexcept {
-  return operator+(zt, -d);
-}
-
-}  // namespace date

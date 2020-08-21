@@ -101,12 +101,11 @@ TEST(dtz, format_time_point) {
   const auto tmp3 = mtp<dtz::tai_clock>(ymd, 1h);
   const auto tmp4 = mtp<dtz::gps_clock>(ymd, 1h);
   const auto tmp5 = mtp("Europe/Berlin", ymd, 1h);
-  
+
   //const auto sys = dtz::sys_days{ ymd };
   //const auto utc = dtz::utc_clock::from_sys(sys);
   //const auto tai = dtz::tai_clock::from_utc(utc);
   //const auto gps = dtz::gps_clock::from_utc(utc);
   //const auto zon = dtz::make_zoned("Europe/Berlin", sys + 0h);
   //const auto loc = zon.get_local_time;
-  
 }
