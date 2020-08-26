@@ -32,6 +32,8 @@ std::string error::message(int ev) const {
     return "invalid seconds format";
   case errc::invalid_subseconds_format:
     return "invalid subseconds format";
+  case errc::tzdata_load_error:
+    return "tzdata load error";
   }
   return "unknown error value: " + std::to_string(ev);
 }
@@ -43,6 +45,31 @@ const error& error_category() noexcept {
 }
 
 #ifdef _WIN32
+
+void initialize(const std::filesystem::path& tzdata, std::error_code& ec) noexcept {
+  ec.clear();
+  if (!std::filesystem::is_directory(tzdata)) {
+    ec = std::make_error_code(std::errc::no_such_file_or_directory);
+    return;
+  }
+  try {
+    date::set_install(std::filesystem::canonical(tzdata).string());
+  }
+  catch (const std::system_error& e) {
+    ec = e.code();
+  }
+  catch (...) {
+    ec = std::make_error_code(errc::tzdata_load_error);
+  }
+}
+
+void initialize(const std::filesystem::path& tzdata) {
+  std::error_code ec;
+  initialize(tzdata, ec);
+  if (ec) {
+    throw std::system_error(ec, "Could not load time zone database.");
+  }
+}
 
 void initialize(std::error_code& ec) noexcept {
   ec.clear();
@@ -67,11 +94,7 @@ void initialize(std::error_code& ec) noexcept {
   if (!std::filesystem::is_directory(tzdata)) {
     tzdata = path.parent_path() / "share" / "tzdata";
   }
-  if (!std::filesystem::is_directory(tzdata)) {
-    ec = std::make_error_code(std::errc::no_such_file_or_directory);
-    return;
-  }
-  date::set_install(std::filesystem::canonical(tzdata).string());
+  initialize(tzdata, ec);
 }
 
 void initialize() {
@@ -84,12 +107,17 @@ void initialize() {
 
 #else
 
+void initialize(const std::filesystem::path& tzdata, std::error_code& ec) noexcept {
+  ec.clear();
+}
+
+void initialize(const std::filesystem::path& tzdata) {}
+
 void initialize(std::error_code& ec) noexcept {
   ec.clear();
 }
 
-void initialize() {
-}
+void initialize() {}
 
 #endif
 

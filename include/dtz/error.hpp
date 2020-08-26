@@ -13,6 +13,7 @@ enum class errc {
   invalid_minutes_format,
   invalid_seconds_format,
   invalid_subseconds_format,
+  tzdata_load_error,
 };
 
 class error : public std::error_category {

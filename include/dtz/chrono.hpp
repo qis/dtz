@@ -2,6 +2,7 @@
 #include <date/date.h>
 #include <date/tz.h>
 #include <chrono>
+#include <filesystem>
 #include <string_view>
 #include <type_traits>
 
@@ -471,6 +472,9 @@ template <Clock Clock>
 // ====================================================================================================================
 // Initialize
 // ====================================================================================================================
+
+void initialize(const std::filesystem::path& tzdata, std::error_code& ec) noexcept;
+void initialize(const std::filesystem::path& tzdata);
 
 void initialize(std::error_code& ec) noexcept;
 void initialize();
