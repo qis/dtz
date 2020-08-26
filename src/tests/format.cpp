@@ -1,80 +1,31 @@
+#include "format.hpp"
 #include <dtz/format.hpp>
 #include <gtest/gtest.h>
 
-using namespace dtz::literals;
+template <dtz::Duration Duration>
+void format_duration_test() {
+  for (const auto& e : format_duration_data<typename Duration::rep, typename Duration::period>::value) {
+    EXPECT_EQ(e.first, fmt::format("{}", e.second));
+  }
+  for (const auto& e : format_duration_data<float, typename Duration::period>::value) {
+    EXPECT_EQ(e.first, fmt::format("{}", e.second));
+  }
+  for (const auto& e : format_duration_data<double, typename Duration::period>::value) {
+    EXPECT_EQ(e.first, fmt::format("{}", e.second));
+  }
+}
 
 TEST(dtz, format_duration) {
-  EXPECT_EQ("00:00:00.000000001", fmt::format("{}", dtz::nanoseconds{ 1 }));
-  EXPECT_EQ("00:00:00.000001000", fmt::format("{}", dtz::nanoseconds{ 1us }));
-  EXPECT_EQ("00:00:00.001000000", fmt::format("{}", dtz::nanoseconds{ 1ms }));
-  EXPECT_EQ("00:00:01.000000000", fmt::format("{}", dtz::nanoseconds{ 1s }));
-  EXPECT_EQ("00:01:00.000000000", fmt::format("{}", dtz::nanoseconds{ 1min }));
-  EXPECT_EQ("01:00:00.000000000", fmt::format("{}", dtz::nanoseconds{ 1h }));
-  EXPECT_EQ("24:00:00.000000000", fmt::format("{}", dtz::nanoseconds{ dtz::days{ 1 } }));
-
-  EXPECT_EQ("00:00:00.000001", fmt::format("{}", dtz::microseconds{ 1 }));
-  EXPECT_EQ("00:00:00.001000", fmt::format("{}", dtz::microseconds{ 1ms }));
-  EXPECT_EQ("00:00:01.000000", fmt::format("{}", dtz::microseconds{ 1s }));
-  EXPECT_EQ("00:01:00.000000", fmt::format("{}", dtz::microseconds{ 1min }));
-  EXPECT_EQ("01:00:00.000000", fmt::format("{}", dtz::microseconds{ 1h }));
-  EXPECT_EQ("24:00:00.000000", fmt::format("{}", dtz::microseconds{ dtz::days{ 1 } }));
-
-  EXPECT_EQ("00:00:00.001", fmt::format("{}", dtz::milliseconds{ 1 }));
-  EXPECT_EQ("00:00:01.000", fmt::format("{}", dtz::milliseconds{ 1s }));
-  EXPECT_EQ("00:01:00.000", fmt::format("{}", dtz::milliseconds{ 1min }));
-  EXPECT_EQ("01:00:00.000", fmt::format("{}", dtz::milliseconds{ 1h }));
-  EXPECT_EQ("24:00:00.000", fmt::format("{}", dtz::milliseconds{ dtz::days{ 1 } }));
-
-  EXPECT_EQ("00:00:01", fmt::format("{}", dtz::seconds{ 1 }));
-  EXPECT_EQ("00:01:00", fmt::format("{}", dtz::seconds{ 1min }));
-  EXPECT_EQ("01:00:00", fmt::format("{}", dtz::seconds{ 1h }));
-  EXPECT_EQ("24:00:00", fmt::format("{}", dtz::seconds{ dtz::days{ 1 } }));
-
-  EXPECT_EQ("00:01", fmt::format("{}", dtz::minutes{ 1 }));
-  EXPECT_EQ("01:00", fmt::format("{}", dtz::minutes{ 1h }));
-  EXPECT_EQ("24:00", fmt::format("{}", dtz::minutes{ dtz::days{ 1 } }));
-
-  EXPECT_EQ("01:00", fmt::format("{}", dtz::hours{ 1 }));
-  EXPECT_EQ("24:00", fmt::format("{}", dtz::hours{ dtz::days{ 1 } }));
-
-  EXPECT_EQ("24:00", fmt::format("{}", dtz::days{ 1 }));
-  EXPECT_EQ("120:00", fmt::format("{}", dtz::days{ 5 }));
-
-  EXPECT_EQ("-00:00:00.000000001", fmt::format("{}", -dtz::nanoseconds{ 1 }));
-  EXPECT_EQ("-00:00:00.000001000", fmt::format("{}", -dtz::nanoseconds{ 1us }));
-  EXPECT_EQ("-00:00:00.001000000", fmt::format("{}", -dtz::nanoseconds{ 1ms }));
-  EXPECT_EQ("-00:00:01.000000000", fmt::format("{}", -dtz::nanoseconds{ 1s }));
-  EXPECT_EQ("-00:01:00.000000000", fmt::format("{}", -dtz::nanoseconds{ 1min }));
-  EXPECT_EQ("-01:00:00.000000000", fmt::format("{}", -dtz::nanoseconds{ 1h }));
-  EXPECT_EQ("-24:00:00.000000000", fmt::format("{}", -dtz::nanoseconds{ dtz::days{ 1 } }));
-
-  EXPECT_EQ("-00:00:00.000001", fmt::format("{}", -dtz::microseconds{ 1 }));
-  EXPECT_EQ("-00:00:00.001000", fmt::format("{}", -dtz::microseconds{ 1ms }));
-  EXPECT_EQ("-00:00:01.000000", fmt::format("{}", -dtz::microseconds{ 1s }));
-  EXPECT_EQ("-00:01:00.000000", fmt::format("{}", -dtz::microseconds{ 1min }));
-  EXPECT_EQ("-01:00:00.000000", fmt::format("{}", -dtz::microseconds{ 1h }));
-  EXPECT_EQ("-24:00:00.000000", fmt::format("{}", -dtz::microseconds{ dtz::days{ 1 } }));
-
-  EXPECT_EQ("-00:00:00.001", fmt::format("{}", -dtz::milliseconds{ 1 }));
-  EXPECT_EQ("-00:00:01.000", fmt::format("{}", -dtz::milliseconds{ 1s }));
-  EXPECT_EQ("-00:01:00.000", fmt::format("{}", -dtz::milliseconds{ 1min }));
-  EXPECT_EQ("-01:00:00.000", fmt::format("{}", -dtz::milliseconds{ 1h }));
-  EXPECT_EQ("-24:00:00.000", fmt::format("{}", -dtz::milliseconds{ dtz::days{ 1 } }));
-
-  EXPECT_EQ("-00:00:01", fmt::format("{}", -dtz::seconds{ 1 }));
-  EXPECT_EQ("-00:01:00", fmt::format("{}", -dtz::seconds{ 1min }));
-  EXPECT_EQ("-01:00:00", fmt::format("{}", -dtz::seconds{ 1h }));
-  EXPECT_EQ("-24:00:00", fmt::format("{}", -dtz::seconds{ dtz::days{ 1 } }));
-
-  EXPECT_EQ("-00:01", fmt::format("{}", -dtz::minutes{ 1 }));
-  EXPECT_EQ("-01:00", fmt::format("{}", -dtz::minutes{ 1h }));
-  EXPECT_EQ("-24:00", fmt::format("{}", -dtz::minutes{ dtz::days{ 1 } }));
-
-  EXPECT_EQ("-01:00", fmt::format("{}", -dtz::hours{ 1 }));
-  EXPECT_EQ("-24:00", fmt::format("{}", -dtz::hours{ dtz::days{ 1 } }));
-
-  EXPECT_EQ("-24:00", fmt::format("{}", -dtz::days{ 1 }));
-  EXPECT_EQ("-120:00", fmt::format("{}", -dtz::days{ 5 }));
+  format_duration_test<dtz::nanoseconds>();
+  format_duration_test<dtz::microseconds>();
+  format_duration_test<dtz::milliseconds>();
+  format_duration_test<dtz::seconds>();
+  format_duration_test<dtz::minutes>();
+  format_duration_test<dtz::hours>();
+  format_duration_test<dtz::days>();
+  format_duration_test<dtz::weeks>();
+  format_duration_test<dtz::months>();
+  format_duration_test<dtz::years>();
 }
 
 template <dtz::ClockOrLocal ClockOrLocal, dtz::Duration Duration>

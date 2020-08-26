@@ -18,6 +18,14 @@ template <dtz::Duration Duration>
 }  // namespace date
 
 int main(int argc, char* argv[]) {
+
+
+  const auto dur = dtz::microseconds{ 1 };
+  const auto str = fmt::format("{}", dur);
+  fmt::print("ok: {}\n", dtz::parse<dtz::microseconds>(str) == dur);
+
+
+
   const auto tod = 1h + 30min + 30s + 500ms;
   const auto ltp = dtz::cast<dtz::duration<double, dtz::years::period>>(dtz::local_days{ 2020_y / 8 / 26 } + tod);
   fmt::print("{}\n", ltp);
