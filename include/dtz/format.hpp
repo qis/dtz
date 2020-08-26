@@ -3,26 +3,34 @@
 #include <fmt/format.h>
 
 namespace dtz {
+namespace internal {
+
+template <typename Rep, typename Period, Duration Duration>
+inline constexpr auto is_precision_less = std::ratio_less_v<Period, typename Duration::period> ||
+  (std::is_floating_point_v<Rep> && std::ratio_less_equal_v<Period, typename Duration::period>);
+
+}  // namespace internal
 
 template <std::size_t SIZE, Duration Duration>
 inline auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const Duration& duration) {
   using Period = typename Duration::period;
+  using Rep = typename Duration::rep;
   if (duration < Duration{ 0 }) {
     out.push_back('-');
   }
   const auto d = abs(duration);
   const auto h = cast<hours>(d);
-  if constexpr (std::ratio_less_v<Period, hours::period>) {
+  if constexpr (internal::is_precision_less<Rep, Period, hours>) {
     const auto m = duration_cast<minutes>(d - h);
-    if constexpr (std::ratio_less_v<Period, minutes::period>) {
+    if constexpr (internal::is_precision_less<Rep, Period, minutes>) {
       const auto s = duration_cast<seconds>(d - h - m);
-      if constexpr (std::ratio_less_v<Period, microseconds::period>) {
+      if constexpr (internal::is_precision_less<Rep, Period, microseconds>) {
         const auto ns = duration_cast<nanoseconds>(d - h - m - s);
         return fmt::format_to(out, "{:02}:{:02}:{:02}.{:09}", h.count(), m.count(), s.count(), ns.count());
-      } else if constexpr (std::ratio_less_v<Period, milliseconds::period>) {
+      } else if constexpr (internal::is_precision_less<Rep, Period, milliseconds>) {
         const auto us = duration_cast<microseconds>(d - h - m - s);
         return fmt::format_to(out, "{:02}:{:02}:{:02}.{:06}", h.count(), m.count(), s.count(), us.count());
-      } else if constexpr (std::ratio_less_v<Period, seconds::period>) {
+      } else if constexpr (internal::is_precision_less<Rep, Period, seconds>) {
         const auto ms = duration_cast<milliseconds>(d - h - m - s);
         return fmt::format_to(out, "{:02}:{:02}:{:02}.{:03}", h.count(), m.count(), s.count(), ms.count());
       } else {
