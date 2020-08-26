@@ -8,22 +8,21 @@ template <std::size_t SIZE, Duration Duration>
 inline auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const Duration& duration) {
   using Period = typename Duration::period;
   if (duration < Duration{ 0 }) {
-    constexpr const char* minus = "-";
-    out.append(minus, minus + 1);
+    out.push_back('-');
   }
   const auto d = abs(duration);
   const auto h = cast<hours>(d);
-  if constexpr (std::ratio_less_equal_v<Period, minutes::period>) {
+  if constexpr (std::ratio_less_v<Period, hours::period>) {
     const auto m = duration_cast<minutes>(d - h);
-    if constexpr (std::ratio_less_equal_v<Period, seconds::period>) {
+    if constexpr (std::ratio_less_v<Period, minutes::period>) {
       const auto s = duration_cast<seconds>(d - h - m);
-      if constexpr (std::ratio_less_equal_v<Period, nanoseconds::period>) {
+      if constexpr (std::ratio_less_v<Period, microseconds::period>) {
         const auto ns = duration_cast<nanoseconds>(d - h - m - s);
         return fmt::format_to(out, "{:02}:{:02}:{:02}.{:09}", h.count(), m.count(), s.count(), ns.count());
-      } else if constexpr (std::ratio_less_equal_v<Period, microseconds::period>) {
+      } else if constexpr (std::ratio_less_v<Period, milliseconds::period>) {
         const auto us = duration_cast<microseconds>(d - h - m - s);
         return fmt::format_to(out, "{:02}:{:02}:{:02}.{:06}", h.count(), m.count(), s.count(), us.count());
-      } else if constexpr (std::ratio_less_equal_v<Period, milliseconds::period>) {
+      } else if constexpr (std::ratio_less_v<Period, seconds::period>) {
         const auto ms = duration_cast<milliseconds>(d - h - m - s);
         return fmt::format_to(out, "{:02}:{:02}:{:02}.{:03}", h.count(), m.count(), s.count(), ms.count());
       } else {
@@ -40,46 +39,51 @@ inline auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const Duration&
 template <std::size_t SIZE, LocalTime LocalTime>
 inline auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const LocalTime& tp) {
   using Duration = typename LocalTime::duration;
-  using Period = typename LocalTime::period;
+  using Period = typename Duration::period;
   const auto tpd = cast<days>(tp);
   const auto ymd = year_month_day{ tpd };
   const auto iy = static_cast<int>(ymd.year());
-  const auto um = static_cast<unsigned int>(ymd.month());
-  const auto ud = static_cast<unsigned int>(ymd.day());
-  if constexpr (std::ratio_less_equal_v<Period, hours::period>) {
-    const auto sec = cast<seconds>(tpd);
-    const auto hms = hh_mm_ss<Duration>{ cast<Duration>(tp - sec) }.to_duration();
-    const auto h = cast<hours>(hms);
-    if constexpr (std::ratio_less_equal_v<Period, minutes::period>) {
-      const auto m = cast<minutes>(hms - h);
-      if constexpr (std::ratio_less_equal_v<Period, seconds::period>) {
-        const auto s = cast<seconds>(hms - h - m);
-        if constexpr (std::ratio_less_equal_v<Period, nanoseconds::period>) {
-          const auto ns = cast<nanoseconds>(hms - h - m - s);
-          constexpr auto format = "{}-{:02}-{:02} {:02}:{:02}:{:02}.{:09}";
-          return fmt::format_to(out, format, iy, um, ud, h.count(), m.count(), s.count(), ns.count());
-        } else if constexpr (std::ratio_less_equal_v<Period, microseconds::period>) {
-          const auto us = cast<microseconds>(hms - h - m - s);
-          constexpr auto format = "{}-{:02}-{:02} {:02}:{:02}:{:02}.{:06}";
-          return fmt::format_to(out, format, iy, um, ud, h.count(), m.count(), s.count(), us.count());
-        } else if constexpr (std::ratio_less_equal_v<Period, milliseconds::period>) {
-          const auto ms = cast<milliseconds>(hms - h - m - s);
-          constexpr auto format = "{}-{:02}-{:02} {:02}:{:02}:{:02}.{:03}";
-          return fmt::format_to(out, format, iy, um, ud, h.count(), m.count(), s.count(), ms.count());
+  if constexpr (std::ratio_less_v<Period, years::period>) {
+    const auto um = static_cast<unsigned int>(ymd.month());
+    if constexpr (std::ratio_less_v<Period, months::period>) {
+      const auto ud = static_cast<unsigned int>(ymd.day());
+      if constexpr (std::ratio_less_v<Period, days::period>) {
+        const auto d = tp - tpd;
+        const auto h = cast<hours>(d);
+        if constexpr (std::ratio_less_v<Period, hours::period>) {
+          const auto m = duration_cast<minutes>(d - h);
+          if constexpr (std::ratio_less_v<Period, minutes::period>) {
+            const auto s = duration_cast<seconds>(d - h - m);
+            if constexpr (std::ratio_less_v<Period, microseconds::period>) {
+              const auto ns = duration_cast<nanoseconds>(d - h - m - s);
+              constexpr auto format = "{}-{:02}-{:02} {:02}:{:02}:{:02}.{:09}";
+              return fmt::format_to(out, format, iy, um, ud, h.count(), m.count(), s.count(), ns.count());
+            } else if constexpr (std::ratio_less_v<Period, milliseconds::period>) {
+              const auto us = duration_cast<microseconds>(d - h - m - s);
+              constexpr auto format = "{}-{:02}-{:02} {:02}:{:02}:{:02}.{:06}";
+              return fmt::format_to(out, format, iy, um, ud, h.count(), m.count(), s.count(), us.count());
+            } else if constexpr (std::ratio_less_v<Period, seconds::period>) {
+              const auto ms = duration_cast<milliseconds>(d - h - m - s);
+              constexpr auto format = "{}-{:02}-{:02} {:02}:{:02}:{:02}.{:03}";
+              return fmt::format_to(out, format, iy, um, ud, h.count(), m.count(), s.count(), ms.count());
+            } else {
+              constexpr auto format = "{}-{:02}-{:02} {:02}:{:02}:{:02}";
+              return fmt::format_to(out, format, iy, um, ud, h.count(), m.count(), s.count());
+            }
+          } else {
+            return fmt::format_to(out, "{}-{:02}-{:02} {:02}:{:02}", iy, um, ud, h.count(), m.count());
+          }
         } else {
-          constexpr auto format = "{}-{:02}-{:02} {:02}:{:02}:{:02}";
-          return fmt::format_to(out, format, iy, um, ud, h.count(), m.count(), s.count());
+          return fmt::format_to(out, "{}-{:02}-{:02} {:02}:00", iy, um, ud, h.count());
         }
       } else {
-        constexpr auto format = "{}-{:02}-{:02} {:02}:{:02}";
-        return fmt::format_to(out, format, iy, um, ud, h.count(), m.count());
+        return fmt::format_to(out, "{}-{:02}-{:02}", iy, um, ud);
       }
     } else {
-      constexpr auto format = "{}-{:02}-{:02} {:02}:00";
-      return fmt::format_to(out, format, iy, um, ud, h.count());
+      return fmt::format_to(out, "{}-{:02}", iy, um);
     }
   } else {
-    return fmt::format_to(out, "{}-{:02}-{:02}", iy, um, ud);
+    return fmt::format_to(out, "{}", iy);
   }
 }
 
@@ -152,17 +156,15 @@ inline constexpr auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const
 
 template <std::size_t SIZE>
 inline constexpr auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const month_weekday& mwd) {
-  constexpr const char* s = "/";
   format_to(out, mwd.month());
-  out.append(s, s + 1);
+  out.push_back('/');
   return format_to(out, mwd.weekday_indexed());
 }
 
 template <std::size_t SIZE>
 inline constexpr auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const month_weekday_last& mwdl) {
-  constexpr const char* s = "/";
   format_to(out, mwdl.month());
-  out.append(s, s + 1);
+  out.push_back('/');
   return format_to(out, mwdl.weekday_last());
 }
 
@@ -191,18 +193,16 @@ inline constexpr auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const
 
 template <std::size_t SIZE>
 inline constexpr auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const year_month_weekday& ymwd) {
-  constexpr const char* s = "/";
   format_to(out, ymwd.year() / ymwd.month());
-  out.append(s, s + 1);
+  out.push_back('/');
   format_to(out, ymwd.weekday_indexed());
   return out.end();
 }
 
 template <std::size_t SIZE>
 inline constexpr auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const year_month_weekday_last& ymwdl) {
-  constexpr const char* s = "/";
   format_to(out, ymwdl.year() / ymwdl.month());
-  out.append(s, s + 1);
+  out.push_back('/');
   format_to(out, ymwdl.weekday_last());
   return out.end();
 }
