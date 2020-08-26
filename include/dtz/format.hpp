@@ -40,7 +40,7 @@ template <std::size_t SIZE, LocalTime LocalTime>
 inline auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const LocalTime& tp) {
   using Duration = typename LocalTime::duration;
   using Period = typename Duration::period;
-  const auto tpd = cast<days>(tp);
+  const auto tpd = floor<days>(tp);
   const auto ymd = year_month_day{ tpd };
   const auto iy = static_cast<int>(ymd.year());
   if constexpr (std::ratio_less_v<Period, years::period>) {
@@ -48,42 +48,42 @@ inline auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const LocalTime
     if constexpr (std::ratio_less_v<Period, months::period>) {
       const auto ud = static_cast<unsigned int>(ymd.day());
       if constexpr (std::ratio_less_v<Period, days::period>) {
-        const auto d = tp - tpd;
-        const auto h = cast<hours>(d);
+        const auto d = abs(tp - tpd);
+        const auto h = duration_cast<hours>(d);
         if constexpr (std::ratio_less_v<Period, hours::period>) {
           const auto m = duration_cast<minutes>(d - h);
           if constexpr (std::ratio_less_v<Period, minutes::period>) {
             const auto s = duration_cast<seconds>(d - h - m);
             if constexpr (std::ratio_less_v<Period, microseconds::period>) {
               const auto ns = duration_cast<nanoseconds>(d - h - m - s);
-              constexpr auto format = "{}-{:02}-{:02} {:02}:{:02}:{:02}.{:09}";
+              constexpr auto format = "{:04}-{:02}-{:02} {:02}:{:02}:{:02}.{:09}";
               return fmt::format_to(out, format, iy, um, ud, h.count(), m.count(), s.count(), ns.count());
             } else if constexpr (std::ratio_less_v<Period, milliseconds::period>) {
               const auto us = duration_cast<microseconds>(d - h - m - s);
-              constexpr auto format = "{}-{:02}-{:02} {:02}:{:02}:{:02}.{:06}";
+              constexpr auto format = "{:04}-{:02}-{:02} {:02}:{:02}:{:02}.{:06}";
               return fmt::format_to(out, format, iy, um, ud, h.count(), m.count(), s.count(), us.count());
             } else if constexpr (std::ratio_less_v<Period, seconds::period>) {
               const auto ms = duration_cast<milliseconds>(d - h - m - s);
-              constexpr auto format = "{}-{:02}-{:02} {:02}:{:02}:{:02}.{:03}";
+              constexpr auto format = "{:04}-{:02}-{:02} {:02}:{:02}:{:02}.{:03}";
               return fmt::format_to(out, format, iy, um, ud, h.count(), m.count(), s.count(), ms.count());
             } else {
-              constexpr auto format = "{}-{:02}-{:02} {:02}:{:02}:{:02}";
+              constexpr auto format = "{:04}-{:02}-{:02} {:02}:{:02}:{:02}";
               return fmt::format_to(out, format, iy, um, ud, h.count(), m.count(), s.count());
             }
           } else {
-            return fmt::format_to(out, "{}-{:02}-{:02} {:02}:{:02}", iy, um, ud, h.count(), m.count());
+            return fmt::format_to(out, "{:04}-{:02}-{:02} {:02}:{:02}", iy, um, ud, h.count(), m.count());
           }
         } else {
-          return fmt::format_to(out, "{}-{:02}-{:02} {:02}:00", iy, um, ud, h.count());
+          return fmt::format_to(out, "{:04}-{:02}-{:02} {:02}:00", iy, um, ud, h.count());
         }
       } else {
-        return fmt::format_to(out, "{}-{:02}-{:02}", iy, um, ud);
+        return fmt::format_to(out, "{:04}-{:02}-{:02}", iy, um, ud);
       }
     } else {
-      return fmt::format_to(out, "{}-{:02}", iy, um);
+      return fmt::format_to(out, "{:04}-{:02}", iy, um);
     }
   } else {
-    return fmt::format_to(out, "{}", iy);
+    return fmt::format_to(out, "{:04}", iy);
   }
 }
 

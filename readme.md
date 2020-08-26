@@ -94,6 +94,11 @@ template <dtz::Duration Duration>
   return local_days{ ymd } + duration_cast<Duration>(hms.to_duration());
 }
 
+template <dtz::Duration Duration>
+[[nodiscard]] inline constexpr auto operator-(const year_month_day& ymd, const hh_mm_ss<Duration>& hms) noexcept {
+  return local_days{ ymd } - duration_cast<Duration>(hms.to_duration());
+}
+
 }  // namespace date
 ```
 

@@ -416,7 +416,6 @@ TEST(dtz, hms) {
   const auto sys = dtz::sys_days{ ymd };
   const auto utc = dtz::utc_clock::from_sys(sys);
   const auto tai = dtz::tai_clock::from_utc(utc);
-  const auto gps = dtz::gps_clock::from_utc(utc);
   const auto zon = dtz::make_zoned(dtz::locate_zone("Europe/Berlin"), loc + 0h);
 
   // template <ValidHHMMSSDuration FromValidHHMMSSDuration>
@@ -494,13 +493,8 @@ TEST(dtz, hms) {
   EXPECT_EQ(dtz::hms(tai + 1h + 1min + 1s + 1ms).seconds(), 11s);
   EXPECT_EQ(dtz::hms(tai + 1h + 1min + 1s + 1ms).subseconds(), 1ms);
 
-  static_assert(std::is_same_v<decltype(dtz::hms(gps + 90ms)), dtz::hh_mm_ss<dtz::milliseconds>>);
-  static_assert(std::is_same_v<decltype(dtz::hms(gps + 90s)), dtz::hh_mm_ss<dtz::seconds>>);
-
-  EXPECT_EQ(dtz::hms(gps + 1h + 1min + 1s + 1ms).hours(), 22h);
-  EXPECT_EQ(dtz::hms(gps + 1h + 1min + 1s + 1ms).minutes(), 59min);
-  EXPECT_EQ(dtz::hms(gps + 1h + 1min + 1s + 1ms).seconds(), 7s);
-  EXPECT_EQ(dtz::hms(gps + 1h + 1min + 1s + 1ms).subseconds(), 999ms);
+  static_assert(std::is_same_v<decltype(dtz::hms(dtz::gps_clock::from_utc(utc) + 90ms)), dtz::hh_mm_ss<dtz::milliseconds>>);
+  static_assert(std::is_same_v<decltype(dtz::hms(dtz::gps_clock::from_utc(utc) + 90s)), dtz::hh_mm_ss<dtz::seconds>>);
 
   // template <ValidHHMMSSDuration FromValidHHMMSSDuration>
   // auto hms(const zoned_time<FromValidHHMMSSDuration>& zt)

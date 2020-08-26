@@ -431,7 +431,7 @@ template <ValidHHMMSSDuration FromValidHHMMSSDuration>
 
 template <ClockOrLocal FromClockOrLocal, ValidHHMMSSDuration FromValidHHMMSSDuration>
 [[nodiscard]] inline constexpr auto hms(const time_point<FromClockOrLocal, FromValidHHMMSSDuration>& tp) {
-  return hh_mm_ss<FromValidHHMMSSDuration>{ tp - cast<days>(tp) };
+  return hh_mm_ss<FromValidHHMMSSDuration>{ tp - floor<days>(tp) };
 }
 
 template <ValidHHMMSSDuration FromValidHHMMSSDuration>
