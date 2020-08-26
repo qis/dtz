@@ -543,33 +543,11 @@ TEST(dtz, now) {
   static_assert(std::is_same_v<decltype(dtz::now<dtz::tai_clock>()), dtz::tai_clock::time_point>);
   static_assert(std::is_same_v<decltype(dtz::now<dtz::gps_clock>()), dtz::gps_clock::time_point>);
 
-  // template <Duration Duration>
-  // auto now()
-  static_assert(std::is_same_v<decltype(dtz::now<dtz::milliseconds>()), dtz::sys_time<dtz::milliseconds>>);
-  static_assert(std::is_same_v<decltype(dtz::now<dtz::seconds>()), dtz::sys_time<dtz::seconds>>);
-  static_assert(std::is_same_v<decltype(dtz::now<dtz::minutes>()), dtz::sys_time<dtz::minutes>>);
-  static_assert(std::is_same_v<decltype(dtz::now<dtz::hours>()), dtz::sys_time<dtz::hours>>);
-  static_assert(std::is_same_v<decltype(dtz::now<dtz::days>()), dtz::sys_time<dtz::days>>);
-
   // auto now(const time_zone* zone)
   static_assert(std::is_same_v<decltype(dtz::now(zone)), dtz::zoned_time<dtz::system_clock::duration>>);
 
   // auto now(std::string_view zone)
   static_assert(std::is_same_v<decltype(dtz::now("Europe/Berlin")), dtz::zoned_time<dtz::system_clock::duration>>);
-
-  // template <Duration Duration>
-  // auto now(const time_zone* zone)
-  static_assert(std::is_same_v<decltype(dtz::now<dtz::milliseconds>(zone)), dtz::zoned_time<dtz::milliseconds>>);
-  static_assert(std::is_same_v<decltype(dtz::now<dtz::seconds>(zone)), dtz::zoned_time<dtz::seconds>>);
-  static_assert(std::is_same_v<decltype(dtz::now<dtz::minutes>(zone)), dtz::zoned_time<dtz::minutes>>);
-  static_assert(std::is_same_v<decltype(dtz::now<dtz::hours>(zone)), dtz::zoned_time<dtz::hours>>);
-
-  // template <Duration Duration>
-  // auto now(std::string_view zone)
-  static_assert(std::is_same_v<decltype(dtz::now<dtz::milliseconds>("Europe/Berlin")), dtz::zoned_time<dtz::milliseconds>>);
-  static_assert(std::is_same_v<decltype(dtz::now<dtz::seconds>("Europe/Berlin")), dtz::zoned_time<dtz::seconds>>);
-  static_assert(std::is_same_v<decltype(dtz::now<dtz::minutes>("Europe/Berlin")), dtz::zoned_time<dtz::minutes>>);
-  static_assert(std::is_same_v<decltype(dtz::now<dtz::hours>("Europe/Berlin")), dtz::zoned_time<dtz::hours>>);
 }
 
 TEST(dtz, weekday_operators) {

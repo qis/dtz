@@ -449,18 +449,13 @@ template <Duration FromDuration>
 // Now
 // ====================================================================================================================
 
-[[nodiscard]] inline auto now() noexcept(noexcept(system_clock::now())) {
-  return system_clock::now();
-}
-
 template <Clock Clock>
 [[nodiscard]] inline auto now() noexcept(noexcept(Clock::now())) {
   return Clock::now();
 }
 
-template <Duration Duration>
-[[nodiscard]] inline constexpr auto now() {
-  return cast<Duration>(now());
+[[nodiscard]] inline auto now() noexcept(noexcept(system_clock::now())) {
+  return now<system_clock>();
 }
 
 [[nodiscard]] inline auto now(const time_zone* zone) noexcept(noexcept(date::make_zoned(zone, now()))) {
@@ -469,16 +464,6 @@ template <Duration Duration>
 
 [[nodiscard]] inline auto now(std::string_view zone) {
   return date::make_zoned(locate_zone(zone), now());
-}
-
-template <ValidZonedTimeDuration Duration>
-[[nodiscard]] inline constexpr auto now(const time_zone* zone) noexcept(noexcept(date::make_zoned(zone, now<Duration>()))) {
-  return zoned_time<Duration>{ zone, now<Duration>() };
-}
-
-template <ValidZonedTimeDuration Duration>
-[[nodiscard]] inline constexpr auto now(std::string_view zone) {
-  return zoned_time<Duration>{ locate_zone(zone), now<Duration>() };
 }
 
 // clang-format on
