@@ -292,6 +292,7 @@ struct is_hh_mm_ss : std::false_type {};
 
 template <Duration Duration>
 struct is_hh_mm_ss<hh_mm_ss<Duration>> {
+  using duration = Duration;
   static constexpr bool value = std::ratio_less_v<typename Duration::period, days::period>;
 };
 
@@ -411,7 +412,6 @@ template <Duration ToDuration>
   return cast<ToDuration>(local_days{ ymd });
 }
 
-
 template <LocalTime FromLocalTime>
 [[nodiscard]] inline constexpr auto ymd(const FromLocalTime& tp) {
   return year_month_day{ floor<days>(tp) };
@@ -420,11 +420,6 @@ template <LocalTime FromLocalTime>
 template <TimePoint FromTimePoint>
 [[nodiscard]] inline constexpr auto ymd(const FromTimePoint& tp) {
   return year_month_day{ floor<days>(cast<local_t>(tp)) };
-}
-
-template <ZonedTime FromZonedTime>
-[[nodiscard]] inline constexpr auto ymd(const FromZonedTime& zt) {
-  return year_month_day{ floor<days>(cast<local_t>(zt)) };
 }
 
 
@@ -441,6 +436,12 @@ template <ClockOrLocal FromClockOrLocal, ValidHHMMSSDuration FromValidHHMMSSDura
 template <ValidHHMMSSDuration FromValidHHMMSSDuration>
 [[nodiscard]] inline constexpr auto hms(const zoned_time<FromValidHHMMSSDuration>& zt) {
   return hms(cast<FromValidHHMMSSDuration>(cast<local_t>(zt)));
+}
+
+
+template <Duration FromDuration>
+[[nodiscard]] inline constexpr auto to_duration(const hh_mm_ss<FromDuration>& hms) {
+  return cast<FromDuration>(hms.to_duration());
 }
 
 

@@ -5,23 +5,11 @@ using namespace dtz::literals;
 int main() {
   dtz::initialize();
 
-  const auto ltp0 = dtz::local_days{ 2020_y / 8 / 26 } + 11h + 20min;
-  const auto ztp0 = dtz::make_zoned("Europe/Berlin", ltp0, dtz::choose::latest);
+  const auto ltp = dtz::local_days{ 2020_y / 8 / 26 } + 0h + 20min;
+  const auto ztp = dtz::make_zoned("Europe/Berlin", ltp, dtz::choose::latest);
 
-  const auto ltp1 = dtz::local_days{ 2020_y / 8 / 26 } + 12h + 50min;
-  const auto ztp1 = dtz::make_zoned("Europe/Berlin", ltp1, dtz::choose::latest);
-
-  const auto diff = dtz::cast<dtz::system_clock>(ztp1) - dtz::cast<dtz::system_clock>(ztp0);
-
-  const auto next = dtz::cast<dtz::local_t>(ztp0) + 1h + 30min;
-  const auto ztp2 = dtz::make_zoned(ztp0.get_time_zone(), next, dtz::choose::latest);
-
-  //fmt::print("ymd: {}\n", ymd);
-  //fmt::print("tod: {}\n", tod);
-  //fmt::print("ltp: {}\n", ltp);
-  //fmt::print("ztp: {}\n", ztp);
-  //fmt::print("ztp system_clock: {}\n", dtz::cast<dtz::system_clock>(ztp));
-  //fmt::print("ztp local_t: {}\n", dtz::cast<dtz::local_t>(ztp));
+  fmt::print("ldp: {}\n", dtz::ymd(dtz::cast<dtz::local_t>(ztp)));
+  fmt::print("sdp: {}\n", dtz::ymd(dtz::cast<dtz::system_clock>(ztp)));
 
   //
   //const auto tod = dtz::hh_mm_ss{ 23h + 59min + 59s + 0ms };
