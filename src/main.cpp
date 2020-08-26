@@ -18,32 +18,7 @@ template <dtz::Duration Duration>
 }  // namespace date
 
 int main(int argc, char* argv[]) {
-  const auto fpd = dtz::duration<double, dtz::days::period>{ 0.5 };
-  fmt::print("{}\n", dtz::cast<dtz::minutes>(fpd));
-
-
-  //using namespace std::chrono_literals;
-  //using namespace date::literals;
-  //
-  //const auto ltp = date::local_days{ 2020_y / 8 / 26 - date::years{ 2021 } } + 6h + 0ms;
-  //std::cout << ltp << std::endl;  // -0001-08-26 06:00:00.000
-  //
-  //const auto ymd = date::year_month_day{ std::chrono::floor<date::days>(ltp) };
-  //std::cout << ymd << std::endl;  // -0001-08-26
-  //
-  //const auto hms = date::hh_mm_ss{ ltp - std::chrono::floor<date::days>(ltp) };
-  //std::cout << hms << std::endl;  // 06:00:00.000
-
-  //const auto ztp = dtz::now("Europe/Berlin");
-  //const auto ltp = dtz::cast<dtz::local_t>(ztp);
-  //const auto ymd = dtz::ymd(ltp) - dtz::years{ 2021 };
-  //const auto hms = dtz::hms(ltp);
-  //fmt::print("{}\n", ymd + hms);
-
-  //const auto ymd = dtz::ymd(stp) - dtz::years{ 2021 };
-  //const auto ltp = ymd + dtz::hms(stp);
-
-  //fmt::memory_buffer buffer;
-  //dtz::format_to(buffer, ltp);
-  //fmt::print("\"{}\"\n", std::string_view{ buffer.data(), buffer.size() });
+  const auto tod = 1h + 30min + 30s + 500ms;
+  const auto ltp = dtz::cast<dtz::duration<double, dtz::years::period>>(dtz::local_days{ 2020_y / 8 / 26 } + tod);
+  fmt::print("{}\n", ltp);
 }
