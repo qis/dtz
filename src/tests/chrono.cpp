@@ -515,6 +515,20 @@ TEST(dtz, hms) {
   EXPECT_EQ(dtz::hms(zon + 1h + 1min + 1s + 1ms).subseconds(), 1ms);
 }
 
+TEST(dtz, to_duration) {
+  static_assert(std::is_same_v<decltype(dtz::to_duration(dtz::hms(1h))), dtz::hours>);
+  static_assert(std::is_same_v<decltype(dtz::to_duration(dtz::hms(1min))), dtz::minutes>);
+  static_assert(std::is_same_v<decltype(dtz::to_duration(dtz::hms(1s))), dtz::seconds>);
+  static_assert(std::is_same_v<decltype(dtz::to_duration(dtz::hms(1ms))), dtz::milliseconds>);
+  static_assert(std::is_same_v<decltype(dtz::to_duration(dtz::hms(1ns))), dtz::nanoseconds>);
+
+  EXPECT_EQ(dtz::to_duration(dtz::hms(dtz::days{ 1 } + 1h)), 24h + 1h);
+  EXPECT_EQ(dtz::to_duration(dtz::hms(dtz::days{ 1 } + 1min)), 24h + 1min);
+  EXPECT_EQ(dtz::to_duration(dtz::hms(dtz::days{ 1 } + 1s)), 24h + 1s);
+  EXPECT_EQ(dtz::to_duration(dtz::hms(dtz::days{ 1 } + 1ms)), 24h + 1ms);
+  EXPECT_EQ(dtz::to_duration(dtz::hms(dtz::days{ 1 } + 1ns)), 24h + 1ns);
+}
+
 TEST(dtz, now) {
   const auto zone = dtz::locate_zone("UTC");
   ASSERT_TRUE(zone);
