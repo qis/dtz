@@ -1,12 +1,12 @@
 #include <dtz.hpp>
-#include <cstdio>
-
 #include <iostream>
 
 using namespace date::literals;
 using namespace std::chrono_literals;
 
 int main() {
+  dtz::initialize();
+
   const auto ltp = date::local_days{ 2016_y / 12 / 31 } + 23h + 59min + 59s + 0ms;
   const auto utp = date::utc_clock::from_local(ltp) + 1s;
 

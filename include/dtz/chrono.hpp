@@ -486,11 +486,8 @@ template <ValidZonedTimeDuration Duration>
 // Initialize
 // ====================================================================================================================
 
-bool initialize() noexcept;
-
-inline static bool initialized = []() {
-  return initialize();
-}();
+void initialize(std::error_code& ec) noexcept;
+void initialize();
 
 namespace literals {
 

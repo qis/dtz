@@ -69,7 +69,7 @@ find_package(benchmark CONFIG)
 if(benchmark_FOUND)
   file(GLOB_RECURSE benchmarks_sources src/benchmarks/*.[hc]pp)
   add_executable(benchmarks EXCLUDE_FROM_ALL ${benchmarks_sources} src/main.manifest)
-  target_link_libraries(benchmarks PRIVATE ${PROJECT_NAME} benchmark::benchmark_main)
+  target_link_libraries(benchmarks PRIVATE ${PROJECT_NAME} benchmark::benchmark)
 endif()
 
 # Tests
@@ -79,7 +79,7 @@ if(GTest_FOUND)
 
   file(GLOB_RECURSE tests_sources src/tests/*.[hc]pp)
   add_executable(tests EXCLUDE_FROM_ALL ${tests_sources} src/main.manifest)
-  target_link_libraries(tests PRIVATE ${PROJECT_NAME} GTest::gtest GTest::gtest_main)
+  target_link_libraries(tests PRIVATE ${PROJECT_NAME} GTest::gtest)
 
   include(GoogleTest)
   gtest_discover_tests(tests)

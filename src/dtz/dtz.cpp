@@ -44,30 +44,8 @@ const error& error_category() noexcept {
 
 #ifdef _WIN32
 
-namespace {
-
-[[noreturn]] void exit(const char* message, std::error_code ec) {
-  std::fprintf(stderr, "%s: %s (%d)\n", message, ec.message().data(), ec.value());
-  std::exit(ec.value());
-}
-
-enum class initialize_state {
-  none = 0,
-  initializing,
-  failure,
-  success,
-};
-
-std::atomic<initialize_state> g_initialize_state = initialize_state::none;
-
-}  // namespace
-
-bool initialize() noexcept {
-  initialize_state state = initialize_state::none;
-  if (!g_initialize_state.compare_exchange_strong(state, initialize_state::initializing)) {
-    return state == initialize_state::success;
-  }
-
+void initialize(std::error_code& ec) noexcept {
+  ec.clear();
   std::string executable;
   DWORD size = 0;
   DWORD code = 0;
@@ -77,10 +55,8 @@ bool initialize() noexcept {
     code = GetLastError();
   } while (code == ERROR_INSUFFICIENT_BUFFER);
   if (code) {
-    const auto ec = std::error_code{ static_cast<int>(code), std::system_category() };
-    g_initialize_state.store(initialize_state::failure);
-    exit("Could not locate executable", ec);
-    return false;
+    ec = std::error_code{ static_cast<int>(code), std::system_category() };
+    return;
   }
   executable.resize(size);
   const auto path = std::filesystem::path(executable).parent_path();
@@ -92,22 +68,27 @@ bool initialize() noexcept {
     tzdata = path.parent_path() / "share" / "tzdata";
   }
   if (!std::filesystem::is_directory(tzdata)) {
-    const auto ec = std::make_error_code(std::errc::no_such_file_or_directory);
-    g_initialize_state.store(initialize_state::failure);
-    exit("Could not locate tzdata directory", ec);
-    return false;
+    ec = std::make_error_code(std::errc::no_such_file_or_directory);
+    return;
   }
   date::set_install(std::filesystem::canonical(tzdata).string());
-  if (!g_initialize_state.compare_exchange_strong(state, initialize_state::success)) {
-    return state == initialize_state::success;
+}
+
+void initialize() {
+  std::error_code ec;
+  initialize(ec);
+  if (ec) {
+    throw std::system_error(ec, "Could not load time zone database.");
   }
-  return true;
 }
 
 #else
 
-bool initialize() noexcept {
-  return true;
+void initialize(std::error_code& ec) noexcept {
+  ec.clear();
+}
+
+void initialize() {
 }
 
 #endif
