@@ -35,7 +35,7 @@ template <TimePoint TimePoint>
 struct traits<TimePoint> : traits<local_time<typename TimePoint::duration>> {};
 
 template <ZonedTime ZonedTime>
-struct traits<ZonedTime> : traits<local_time<typename ZonedTime::duration>> {};
+struct traits<ZonedTime> : traits<local_time<typename is_zoned_time<ZonedTime>::duration>> {};
 
 template <Duration Duration>
 struct traits<hh_mm_ss<Duration>> {

@@ -393,12 +393,12 @@ template <ClockOrLocal ToClockOrLocal, TimePointOrLocalTime FromTimePointOrLocal
 
 template <Local ToLocal, ZonedTime FromZonedTime>
 [[nodiscard]] inline constexpr auto cast(const FromZonedTime& zt) {
-  return zt.get_local_time();
+  return cast<typename is_zoned_time<FromZonedTime>::duration>(zt.get_local_time());
 }
 
 template <Clock ToClock, ZonedTime FromZonedTime>
 [[nodiscard]] inline constexpr auto cast(const FromZonedTime& zt) {
-  return cast<ToClock>(zt.get_sys_time());
+  return cast<typename is_zoned_time<FromZonedTime>::duration>(cast<ToClock>(zt.get_sys_time()));
 }
 
 template <Duration ToDuration, Duration FromDuration>

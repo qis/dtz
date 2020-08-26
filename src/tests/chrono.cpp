@@ -288,7 +288,7 @@ TEST(dtz, cast) {
 
   // template <ValidZonedTimeDuration ToValidZonedTimeDuration, ZonedTime FromZonedTime>
   // auto cast(const FromZonedTime& zt)
-  const auto zon = dtz::make_zoned(dtz::locate_zone("Europe/Berlin"), loc + 90s, dtz::choose::earliest);
+  const auto zon = dtz::make_zoned(dtz::locate_zone("Europe/Berlin"), loc + 90min, dtz::choose::earliest);
 
   static_assert(std::is_same_v<decltype(dtz::cast<dtz::milliseconds>(zon)), dtz::zoned_time<dtz::milliseconds>>);
   {
@@ -360,12 +360,12 @@ TEST(dtz, cast) {
 
   // template <Local ToLocal, ZonedTime FromZonedTime>
   // auto cast(const FromZonedTime& tp)
-  static_assert(std::is_same_v<decltype(dtz::cast<dtz::local_t>(zon)), dtz::local_time<dtz::seconds>>);
+  static_assert(std::is_same_v<decltype(dtz::cast<dtz::local_t>(zon)), dtz::local_time<dtz::minutes>>);
   EXPECT_EQ(dtz::cast<dtz::local_t>(zon), loc + 90s);
 
   // template <Clock ToClock, ZonedTime FromZonedTime>
   // auto cast(const FromZonedTime& tp)
-  static_assert(std::is_same_v<decltype(dtz::cast<dtz::system_clock>(zon)), dtz::sys_time<dtz::seconds>>);
+  static_assert(std::is_same_v<decltype(dtz::cast<dtz::system_clock>(zon)), dtz::sys_time<dtz::minutes>>);
   EXPECT_EQ(dtz::cast<dtz::system_clock>(zon), sys + 90s - 1h);
 
   // template <Duration ToDuration, Duration FromDuration>
