@@ -271,3 +271,21 @@ struct format_time_point_data<dtz::weeks> {
     { "-0001-01-07", dtz::cast<dtz::weeks>(dtz::local_days{ (2020_y / 1 / 1) - dtz::years{ 2021 } }) },
   };
 };
+
+template <>
+struct format_time_point_data<dtz::fpmonths<float>> {
+  using time_point = dtz::local_time<dtz::fpmonths<float>>;
+  static inline const std::vector<std::pair<std::string, time_point>> value = {
+    { "2020-06-15", dtz::cast<dtz::fpmonths<float>>(dtz::local_days{ 2020_y / 6 / 15 }) },
+    { "-0001-06-15", dtz::cast<dtz::fpmonths<float>>(dtz::local_days{ (2020_y / 6 / 15) - dtz::years{ 2021 } }) },
+  };
+};
+
+template <>
+struct format_time_point_data<dtz::fpyears<float>> {
+  using time_point = dtz::local_time<dtz::fpyears<float>>;
+  static inline const std::vector<std::pair<std::string, time_point>> value = {
+    { "2020-06-15", dtz::cast<dtz::fpyears<float>>(dtz::local_days{ 2020_y / 6 / 15 }) },
+    { "-0001-06-15", dtz::cast<dtz::fpyears<float>>(dtz::local_days{ (2020_y / 6 / 15) - dtz::years{ 2021 } }) },
+  };
+};

@@ -54,4 +54,6 @@ TEST(dtz, format_time_point) {
   EXPECT_TRUE(format_time_point_test<dtz::hours>());
   EXPECT_TRUE(format_time_point_test<dtz::days>());
   EXPECT_TRUE(format_time_point_test<dtz::weeks>());
+  EXPECT_TRUE(format_time_point_test<dtz::fpmonths<float>>());
+  EXPECT_TRUE(format_time_point_test<dtz::fpyears<float>>());
 }
