@@ -117,7 +117,7 @@ template <Duration Duration>
   std::error_code ec;
   const auto result = parse<Duration>(str, ec);
   if (ec) {
-    throw std::system_error(ec, "could not parse duration");
+    throw std::system_error(ec, "duration parse error for \"" + std::string{ str } + "\"");
   }
   return result;
 }
@@ -266,7 +266,7 @@ template <TimePointOrLocalTime TimePointOrLocalTime>
   std::error_code ec;
   const auto result = parse<TimePointOrLocalTime>(str, ec);
   if (ec) {
-    throw std::system_error(ec, "could not parse time point");
+    throw std::system_error(ec, "time point parse error for \"" + std::string{ str } + "\"");
   }
   return result;
 }
