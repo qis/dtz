@@ -1,6 +1,6 @@
 #pragma once
+#include "chrono.hpp"
 #include "error.hpp"
-#include "traits.hpp"
 #include <charconv>
 #include <string>
 #include <system_error>
@@ -14,6 +14,13 @@ template <Duration Duration>
   const char* beg = str.data();
   const char* const end = beg + str.size();
 
+  // Parse negative sign.
+  bool negative = false;
+  if (*beg == '-') {
+    negative = true;
+    ++beg;
+  }
+
   // Parse hours.
   hours::rep hv;  // NOLINT: Will be set by from_chars or not used on error.
   if (const auto [cur, err] = std::from_chars(beg, end, hv); err != std::errc{} || cur == end || *cur != ':') {
@@ -24,7 +31,7 @@ template <Duration Duration>
   }
 
   // Use absolute hours to initialize result.
-  auto result = cast<Duration>(hours{ std::abs(hv) });
+  auto result = cast<Duration>(hours{ hv });
 
   // Get remaining string length.
   const auto size = end - beg;
@@ -40,7 +47,7 @@ template <Duration Duration>
       } else {
         result += minutes{ mv };
         if (cur == end) {
-          return hv < 0 ? -result : result;
+          return negative ? -result : result;
         }
         if (*cur != ':') {
           ec = std::make_error_code(errc::invalid_format);
@@ -61,7 +68,7 @@ template <Duration Duration>
           } else {
             result += seconds{ sv };
             if (cur == end) {
-              return hv < 0 ? -result : result;
+              return negative ? -result : result;
             }
             if (*cur != '.') {
               ec = std::make_error_code(errc::invalid_format);
@@ -102,7 +109,7 @@ template <Duration Duration>
     }
   }
 
-  return hv < 0 ? -result : result;
+  return negative ? -result : result;
 }
 
 template <Duration Duration>

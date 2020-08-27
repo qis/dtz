@@ -212,6 +212,13 @@ inline constexpr auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const
   return out.end();
 }
 
+template <dtz::Format Format>
+inline std::string format(const Format& value) {
+  fmt::basic_memory_buffer<char, dtz::traits<Format>::buffer_size> out;
+  dtz::format_to(out, value);
+  return { out.data(), out.size() };
+}
+
 }  // namespace dtz
 
 template <dtz::Format Format>
