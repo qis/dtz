@@ -78,6 +78,39 @@ using date::weeks;
 using date::months;
 using date::years;
 
+template <typename T>
+concept FloatingPoint = std::is_floating_point_v<T>;
+
+template <FloatingPoint Rep>
+using fpnanoseconds = duration<Rep, nanoseconds::period>;
+
+template <FloatingPoint Rep>
+using fpmicroseconds = duration<Rep, microseconds::period>;
+
+template <FloatingPoint Rep>
+using fpmilliseconds = duration<Rep, milliseconds::period>;
+
+template <FloatingPoint Rep>
+using fpseconds = duration<Rep, seconds::period>;
+
+template <FloatingPoint Rep>
+using fpminutes = duration<Rep, minutes::period>;
+
+template <FloatingPoint Rep>
+using fphours = duration<Rep, hours::period>;
+
+template <FloatingPoint Rep>
+using fpdays = duration<Rep, days::period>;
+
+template <FloatingPoint Rep>
+using fpweeks = duration<Rep, weeks::period>;
+
+template <FloatingPoint Rep>
+using fpmonths = duration<Rep, months::period>;
+
+template <FloatingPoint Rep>
+using fpyears = duration<Rep, years::period>;
+
 using std::chrono::duration_values;
 using std::chrono::treat_as_floating_point;
 

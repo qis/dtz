@@ -3,13 +3,6 @@
 #include <fmt/format.h>
 
 namespace dtz {
-namespace internal {
-
-template <typename Rep, typename LHS, typename RHS>
-inline constexpr auto is_precision_less = std::ratio_less_v<LHS, RHS> ||
-  (std::is_floating_point_v<Rep> && std::ratio_less_equal_v<LHS, RHS>);
-
-}  // namespace internal
 
 template <std::size_t SIZE, Duration Duration>
 inline auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const Duration& duration) {
@@ -20,17 +13,17 @@ inline auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const Duration&
   }
   const auto d = abs(duration);
   const auto h = cast<hours>(d);
-  if constexpr (internal::is_precision_less<Rep, Period, hours::period>) {
+  if constexpr (FormatDuration<Rep, Period, hours::period>) {
     const auto m = duration_cast<minutes>(d - h);
-    if constexpr (internal::is_precision_less<Rep, Period, minutes::period>) {
+    if constexpr (FormatDuration<Rep, Period, minutes::period>) {
       const auto s = duration_cast<seconds>(d - h - m);
-      if constexpr (internal::is_precision_less<Rep, Period, microseconds::period>) {
+      if constexpr (FormatDuration<Rep, Period, microseconds::period>) {
         const auto ns = duration_cast<nanoseconds>(d - h - m - s);
         return fmt::format_to(out, "{:02}:{:02}:{:02}.{:09}", h.count(), m.count(), s.count(), ns.count());
-      } else if constexpr (internal::is_precision_less<Rep, Period, milliseconds::period>) {
+      } else if constexpr (FormatDuration<Rep, Period, milliseconds::period>) {
         const auto us = duration_cast<microseconds>(d - h - m - s);
         return fmt::format_to(out, "{:02}:{:02}:{:02}.{:06}", h.count(), m.count(), s.count(), us.count());
-      } else if constexpr (internal::is_precision_less<Rep, Period, seconds::period>) {
+      } else if constexpr (FormatDuration<Rep, Period, seconds::period>) {
         const auto ms = duration_cast<milliseconds>(d - h - m - s);
         return fmt::format_to(out, "{:02}:{:02}:{:02}.{:03}", h.count(), m.count(), s.count(), ms.count());
       } else {
@@ -51,27 +44,30 @@ inline auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const LocalTime
   using Rep = typename Duration::rep;
   const auto tpd = floor<days>(tp);
   const auto ymd = year_month_day{ tpd };
-  const auto iy = static_cast<int>(ymd.year());
-  if constexpr (internal::is_precision_less<Rep, Period, years::period>) {
+  const auto iy = std::abs(static_cast<int>(ymd.year()));
+  if (static_cast<int>(ymd.year()) < 0) {
+    out.push_back('-');
+  }
+  if constexpr (std::ratio_less_v<Period, years::period> || std::is_floating_point_v<Rep>) {
     const auto um = static_cast<unsigned int>(ymd.month());
-    if constexpr (internal::is_precision_less<Rep, Period, months::period>) {
+    if constexpr (std::ratio_less_v<Period, years::period> || std::is_floating_point_v<Rep>) {
       const auto ud = static_cast<unsigned int>(ymd.day());
-      if constexpr (internal::is_precision_less<Rep, Period, days::period>) {
+      if constexpr (FormatDuration<Rep, Period, days::period>) {
         const auto d = abs(tp - tpd);
         const auto h = duration_cast<hours>(d);
-        if constexpr (internal::is_precision_less<Rep, Period, hours::period>) {
+        if constexpr (FormatDuration<Rep, Period, hours::period>) {
           const auto m = duration_cast<minutes>(d - h);
-          if constexpr (internal::is_precision_less<Rep, Period, minutes::period>) {
+          if constexpr (FormatDuration<Rep, Period, minutes::period>) {
             const auto s = duration_cast<seconds>(d - h - m);
-            if constexpr (internal::is_precision_less<Rep, Period, microseconds::period>) {
+            if constexpr (FormatDuration<Rep, Period, microseconds::period>) {
               const auto ns = duration_cast<nanoseconds>(d - h - m - s);
               constexpr auto format = "{:04}-{:02}-{:02} {:02}:{:02}:{:02}.{:09}";
               return fmt::format_to(out, format, iy, um, ud, h.count(), m.count(), s.count(), ns.count());
-            } else if constexpr (internal::is_precision_less<Rep, Period, milliseconds::period>) {
+            } else if constexpr (FormatDuration<Rep, Period, milliseconds::period>) {
               const auto us = duration_cast<microseconds>(d - h - m - s);
               constexpr auto format = "{:04}-{:02}-{:02} {:02}:{:02}:{:02}.{:06}";
               return fmt::format_to(out, format, iy, um, ud, h.count(), m.count(), s.count(), us.count());
-            } else if constexpr (internal::is_precision_less<Rep, Period, seconds::period>) {
+            } else if constexpr (FormatDuration<Rep, Period, seconds::period>) {
               const auto ms = duration_cast<milliseconds>(d - h - m - s);
               constexpr auto format = "{:04}-{:02}-{:02} {:02}:{:02}:{:02}.{:03}";
               return fmt::format_to(out, format, iy, um, ud, h.count(), m.count(), s.count(), ms.count());

@@ -4,6 +4,9 @@
 
 namespace dtz {
 
+template <typename Rep, typename LHS, typename RHS>
+concept FormatDuration = std::ratio_less_v<LHS, RHS> || (std::is_floating_point_v<Rep> && std::ratio_less_equal_v<LHS, RHS>);
+
 template <typename T>
 struct traits {
   static constexpr std::size_t buffer_size = 0;

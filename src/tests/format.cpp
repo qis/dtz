@@ -3,60 +3,55 @@
 #include <gtest/gtest.h>
 
 template <dtz::Duration Duration>
-void format_duration_test() {
+bool format_duration_test() {
+  bool success = true;
   for (const auto& e : format_duration_data<typename Duration::rep, typename Duration::period>::value) {
-    EXPECT_EQ(e.first, fmt::format("{}", e.second));
+    const auto str = fmt::format("{}", e.second);
+    success &= e.first == str;
+    EXPECT_EQ(e.first, str);
   }
-  for (const auto& e : format_duration_data<float, typename Duration::period>::value) {
-    EXPECT_EQ(e.first, fmt::format("{}", e.second));
-  }
-  for (const auto& e : format_duration_data<double, typename Duration::period>::value) {
-    EXPECT_EQ(e.first, fmt::format("{}", e.second));
-  }
+  return success;
 }
 
 TEST(dtz, format_duration) {
-  format_duration_test<dtz::nanoseconds>();
-  format_duration_test<dtz::microseconds>();
-  format_duration_test<dtz::milliseconds>();
-  format_duration_test<dtz::seconds>();
-  format_duration_test<dtz::minutes>();
-  format_duration_test<dtz::hours>();
-  format_duration_test<dtz::days>();
-  format_duration_test<dtz::weeks>();
-  format_duration_test<dtz::months>();
-  format_duration_test<dtz::years>();
-}
+  EXPECT_TRUE(format_duration_test<dtz::nanoseconds>());
+  EXPECT_TRUE(format_duration_test<dtz::microseconds>());
+  EXPECT_TRUE(format_duration_test<dtz::milliseconds>());
+  EXPECT_TRUE(format_duration_test<dtz::seconds>());
+  EXPECT_TRUE(format_duration_test<dtz::minutes>());
+  EXPECT_TRUE(format_duration_test<dtz::hours>());
+  EXPECT_TRUE(format_duration_test<dtz::days>());
+  EXPECT_TRUE(format_duration_test<dtz::weeks>());
+  EXPECT_TRUE(format_duration_test<dtz::months>());
+  EXPECT_TRUE(format_duration_test<dtz::years>());
 
-template <dtz::ClockOrLocal ClockOrLocal, dtz::Duration Duration>
-auto mtp(const dtz::year_month_day& ymd, const Duration& duration) {
-  return dtz::cast<ClockOrLocal>(dtz::local_days{ ymd }) + duration;
+  EXPECT_EQ("00:00:00.000000500", fmt::format("{}", dtz::fpmicroseconds<float>{ 0.5f }));
+  EXPECT_EQ("00:00:00.001500", fmt::format("{}", dtz::fpmilliseconds<float>{ 1.5f }));
+  EXPECT_EQ("00:00:02.500", fmt::format("{}", dtz::fpseconds<float>{ 2.5f }));
+  EXPECT_EQ("00:03:30", fmt::format("{}", dtz::fpminutes<float>{ 3.5f }));
+  EXPECT_EQ("04:30", fmt::format("{}", dtz::fphours<float>{ 4.5f }));
+  EXPECT_EQ("36:00", fmt::format("{}", dtz::fpdays<float>{ 1.5f }));
+  EXPECT_EQ("24:00", fmt::format("{}", dtz::fpweeks<float>{ 1.0f / 7 }));
 }
 
 template <dtz::Duration Duration>
-auto mtp(const dtz::time_zone* zone, const dtz::year_month_day& ymd, const Duration& duration) {
-  return dtz::make_zoned(zone, dtz::sys_days{ ymd } + duration);
-}
-
-template <dtz::Duration Duration>
-auto mtp(std::string_view zone, const dtz::year_month_day& ymd, const Duration& duration) {
-  return dtz::make_zoned(zone, dtz::sys_days{ ymd } + duration);
+bool format_time_point_test() {
+  bool success = true;
+  for (const auto& e : format_time_point_data<Duration>::value) {
+    const auto str = fmt::format("{}", e.second);
+    success &= e.first == str;
+    EXPECT_EQ(e.first, str);
+  }
+  return success;
 }
 
 TEST(dtz, format_time_point) {
-  const auto ymd = dtz::year{ 1971 } / dtz::month{ 1 } / dtz::day{ 1 };
-
-  const auto tmp0 = mtp<dtz::local_t>(ymd, 1h);
-  const auto tmp1 = mtp<dtz::system_clock>(ymd, 1h);
-  const auto tmp2 = mtp<dtz::utc_clock>(ymd, 1h);
-  const auto tmp3 = mtp<dtz::tai_clock>(ymd, 1h);
-  const auto tmp4 = mtp<dtz::gps_clock>(ymd, 1h);
-  const auto tmp5 = mtp("Europe/Berlin", ymd, 1h);
-
-  //const auto sys = dtz::sys_days{ ymd };
-  //const auto utc = dtz::utc_clock::from_sys(sys);
-  //const auto tai = dtz::tai_clock::from_utc(utc);
-  //const auto gps = dtz::gps_clock::from_utc(utc);
-  //const auto zon = dtz::make_zoned("Europe/Berlin", sys + 0h);
-  //const auto loc = zon.get_local_time;
+  EXPECT_TRUE(format_time_point_test<dtz::nanoseconds>());
+  EXPECT_TRUE(format_time_point_test<dtz::microseconds>());
+  EXPECT_TRUE(format_time_point_test<dtz::milliseconds>());
+  EXPECT_TRUE(format_time_point_test<dtz::seconds>());
+  EXPECT_TRUE(format_time_point_test<dtz::minutes>());
+  EXPECT_TRUE(format_time_point_test<dtz::hours>());
+  EXPECT_TRUE(format_time_point_test<dtz::days>());
+  EXPECT_TRUE(format_time_point_test<dtz::weeks>());
 }
