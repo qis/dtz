@@ -1,31 +1,10 @@
 # Time Zone Database
 # http://www.iana.org/time-zones
-#
-# Usage:
-#
-#   list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/res/cmake)
-#
-#   find_package(date CONFIG REQUIRED)
-#   target_link_libraries(main PRIVATE date::date date::tz)
-#
-#   include(tzdata)
-#   tzdata(${CMAKE_CURRENT_BINARY_DIR}/tzdata 2020a)
-#
-#   if(WIN32)
-#     install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tzdata DESTINATION share/${PROJECT_NAME})
-#   endif()
-#
 
 include_guard(GLOBAL)
 
-set(tzdata_sources ${CMAKE_CURRENT_LIST_DIR}/tzdata.cpp)
-
 function(tzdata destination version)
-  if(NOT WIN32)
-    return()
-  endif()
-
-  if(NOT EXISTS ${destination}/windowsZones.xml)
+  if(WIN32 AND NOT EXISTS ${destination}/windowsZones.xml)
     if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/download/tzdata/windowsZones.xml)
       message(STATUS "Downloading windowsZones.xml ...")
       file(DOWNLOAD "https://raw.githubusercontent.com/unicode-org/cldr/master/common/supplemental/windowsZones.xml"

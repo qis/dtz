@@ -31,10 +31,6 @@ target_link_libraries(${PROJECT_NAME} PUBLIC fmt::fmt)
 find_package(Threads REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC Threads::Threads)
 
-# Resources
-include(tzdata)
-tzdata(${CMAKE_CURRENT_BINARY_DIR}/tzdata 2020a)
-
 # Install
 install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME})
 
@@ -59,6 +55,8 @@ install(FILES
   DESTINATION lib/cmake/${PROJECT_NAME})
 
 if(WIN32)
+  include(tzdata)
+  tzdata(${CMAKE_CURRENT_BINARY_DIR}/tzdata 2020a)
   install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tzdata DESTINATION share/${PROJECT_NAME})
 endif()
 
