@@ -5,8 +5,11 @@ find_dependency(date CONFIG REQUIRED)
 find_dependency(fmt CONFIG REQUIRED)
 find_dependency(Threads REQUIRED)
 
-if(IS_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/tzdata)
-  file(COPY ${CMAKE_CURRENT_LIST_DIR}/tzdata DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/tzdata/version)
+  file(COPY ${CMAKE_CURRENT_LIST_DIR}/tzdata DESTINATION ${CMAKE_CURRENT_BINARY_DIR} NO_SOURCE_PERMISSIONS)
+  file(READ ${CMAKE_CURRENT_LIST_DIR}/tzdata/version TZDATA_VERSION)
+  string(REGEX REPLACE "[\r\n].*" "" TZDATA_VERSION ${TZDATA_VERSION})
+  message(STATUS "Found tzdata: ${TZDATA_VERSION}")
 endif()
 
 include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@-targets.cmake")
