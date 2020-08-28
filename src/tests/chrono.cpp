@@ -185,6 +185,8 @@ TEST(dtz, concepts) {
   static_assert(!dtz::ZonedTime<dtz::local_days>);
 }
 
+#include <fmt/format.h>
+
 TEST(dtz, make_zoned) {
   const auto loc_zone = dtz::locate_zone("Europe/Berlin");
   ASSERT_TRUE(loc_zone);
@@ -223,6 +225,20 @@ TEST(dtz, make_zoned) {
 
     EXPECT_EQ(zon_loc_days, loc_days);
     EXPECT_EQ(zon_loc_time_point - zon_loc_days, 3h + 0ms);
+  }
+
+  // template <typename Zone, UnsafeZonedLocalTime FromUnsafeZonedLocalTime>
+  // auto make_zoned(Zone&& zone, const FromUnsafeZonedLocalTime& tp)
+  {
+    EXPECT_THROW((void)dtz::make_zoned(loc_zone, loc_time_point), dtz::nonexistent_local_time);
+
+    const auto zon_days = dtz::make_zoned(loc_zone, loc_time_point + 1h);
+
+    const auto zon_loc_time_point = zon_days.get_local_time();
+    const auto zon_loc_days = dtz::time_point_cast<dtz::days>(zon_loc_time_point);
+
+    EXPECT_EQ(zon_loc_days, loc_days);
+    EXPECT_EQ(zon_loc_time_point - zon_loc_days, hms + 1h);
   }
 
   // template <typename Zone, TimePoint FromTimePoint>

@@ -285,23 +285,33 @@ concept ValidZonedTimeDuration = ZonedTime<zoned_time<T>>;
 
 
 template <SafeZonedLocalTime FromSafeZonedLocalTime>
-[[nodiscard]] inline constexpr auto make_zoned(const time_zone* zone, const FromSafeZonedLocalTime& zt) noexcept {
-  return zoned_time<typename FromSafeZonedLocalTime::duration>{ zone, zt, choose::earliest };
+[[nodiscard]] inline constexpr auto make_zoned(const time_zone* zone, const FromSafeZonedLocalTime& lt) noexcept {
+  return zoned_time<typename FromSafeZonedLocalTime::duration>{ zone, lt, choose::earliest };
 }
 
 template <SafeZonedLocalTime FromSafeZonedLocalTime>
-[[nodiscard]] inline constexpr auto make_zoned(std::string_view zone, const FromSafeZonedLocalTime& zt) {
-  return dtz::make_zoned(locate_zone(zone), zt);
+[[nodiscard]] inline constexpr auto make_zoned(std::string_view zone, const FromSafeZonedLocalTime& lt) {
+  return dtz::make_zoned(locate_zone(zone), lt);
 }
 
 template <UnsafeZonedLocalTime FromUnsafeZonedLocalTime>
-[[nodiscard]] inline constexpr auto make_zoned(const time_zone* zone, const FromUnsafeZonedLocalTime& zt, choose choose) noexcept {
-  return zoned_time<typename FromUnsafeZonedLocalTime::duration>{ zone, zt, choose };
+[[nodiscard]] inline constexpr auto make_zoned(const time_zone* zone, const FromUnsafeZonedLocalTime& lt, choose choose) noexcept {
+  return zoned_time<typename FromUnsafeZonedLocalTime::duration>{ zone, lt, choose };
 }
 
 template <UnsafeZonedLocalTime FromUnsafeZonedLocalTime>
-[[nodiscard]] inline constexpr auto make_zoned(std::string_view zone, const FromUnsafeZonedLocalTime& zt, choose choose) {
-  return dtz::make_zoned(locate_zone(zone), zt, choose);
+[[nodiscard]] inline constexpr auto make_zoned(std::string_view zone, const FromUnsafeZonedLocalTime& lt, choose choose) {
+  return dtz::make_zoned(locate_zone(zone), lt, choose);
+}
+
+template <UnsafeZonedLocalTime FromUnsafeZonedLocalTime>
+[[nodiscard]] inline constexpr auto make_zoned(const time_zone* zone, const FromUnsafeZonedLocalTime& lt) {
+  return zoned_time<typename FromUnsafeZonedLocalTime::duration>(zone, lt);
+}
+
+template <UnsafeZonedLocalTime FromUnsafeZonedLocalTime>
+[[nodiscard]] inline constexpr auto make_zoned(std::string_view zone, const FromUnsafeZonedLocalTime& lt) {
+  return dtz::make_zoned(locate_zone(zone), lt);
 }
 
 template <Clock FromClock, ValidZonedTimeDuration FromValidZonedTimeDuration>
