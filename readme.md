@@ -9,6 +9,30 @@ git clone https://github.com/qis/dtz
 vcpkg install --overlay-ports=dtz dtz
 ```
 
+## Usage
+```cpp
+// System time point.
+const auto stp = dtz::now();
+
+// Zoned time point.
+const auto ztp = dtz::make_zoned(dtz::current_zone(), stp);
+
+// Local time point (from zoned).
+const auto ltp = dtz::cast<dtz::minutes>(ztp.get_local_time());
+
+// Local time point as day (from zoned).
+const auto day = dtz::floor<dtz::days>(ltp);
+
+// Local year_month_day (from zoned).
+const auto ymd = dtz::year_month_day{ day };
+
+// Local time of day (from zoned).
+const auto tod = ltp - day;
+
+// Local time of day as hh_mm_ss (from zoned).
+const auto hms = dtz::hh_mm_ss{ tod };
+```
+
 ## Customization
 The standard does not implement operators that have several coflicting but valid meanings.
 
