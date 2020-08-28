@@ -23,13 +23,13 @@ const auto ltp = dtz::cast<dtz::minutes>(ztp.get_local_time());
 // Local time point as day (from zoned).
 const auto day = dtz::floor<dtz::days>(ltp);
 
-// Local year_month_day (from zoned).
+// Year, month, day (from zoned).
 const auto ymd = dtz::year_month_day{ day };
 
-// Local time of day (from zoned).
+// Duration since start of day (from zoned).
 const auto tod = ltp - day;
 
-// Local time of day as hh_mm_ss (from zoned).
+// Hours, minutes, seconds, subseconds since start of day (from zoned).
 const auto hms = dtz::hh_mm_ss{ tod };
 ```
 
