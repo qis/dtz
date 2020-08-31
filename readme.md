@@ -39,9 +39,7 @@ The standard does not implement operators that have several coflicting but valid
 <details>
 <summary><b><code>dtz::weekday</code> comparison</b></summary>
 
-The day of the week can start with 
-
-To enable comparison of `dtz::weekday`, the operators must be implemented in the `date` namespace:
+To enable comparison of `dtz::weekday` using the ISO standard, the following operators must be implemented in the `date` namespace:
 
 ```cpp
 namespace date {
@@ -70,7 +68,7 @@ namespace date {
 <details>
 <summary><b><code>dtz::time_of_day</code> comparison</b></summary>
 
-To enable comparison of `dtz::time_of_day`, the operators must be implemented in the `date` namespace:
+To enable comparison of `dtz::time_of_day`, the following operators must be implemented in the `date` namespace:
 
 ```cpp
 namespace date {
@@ -108,7 +106,7 @@ template <dtz::HHMMSS LHS, dtz::HHMMSS RHS>
 <details>
 <summary><b><code>dtz::year_month_day</code> and <code>dtz::hh_mm_ss</code> addition</b></summary>
 
-To enable comparison of `dtz::time_of_day`, the operators must be implemented in the `date` namespace:
+To enable addition of `dtz::year_month_day` and `dtz::time_of_day`, the following operators must be implemented in the `date` namespace:
 
 ```cpp
 namespace date {
