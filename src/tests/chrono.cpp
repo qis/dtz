@@ -3,6 +3,11 @@
 
 using namespace dtz::literals;
 
+
+// ====================================================================================================================
+// Operators from Readme
+// ====================================================================================================================
+
 namespace date {
 
 [[nodiscard]] inline constexpr bool operator<=(const weekday& lhs, const weekday& rhs) noexcept {
@@ -46,6 +51,41 @@ template <dtz::HHMMSS LHS, dtz::HHMMSS RHS>
   return lhs.to_duration() > rhs.to_duration();
 }
 
+template <dtz::Duration Duration>
+[[nodiscard]] inline constexpr auto operator+(const year_month_day& ymd, const hh_mm_ss<Duration>& hms) noexcept {
+  return local_days{ ymd } + duration_cast<Duration>(hms.to_duration());
+}
+
+template <dtz::Duration Duration>
+[[nodiscard]] inline constexpr auto operator-(const year_month_day& ymd, const hh_mm_ss<Duration>& hms) noexcept {
+  return local_days{ ymd } - duration_cast<Duration>(hms.to_duration());
+}
+
+[[nodiscard]] inline constexpr auto operator+(const year_month_day& ymd, const days& days) noexcept {
+  return year_month_day{ local_days{ ymd } + days };
+}
+
+[[nodiscard]] inline constexpr auto operator-(const year_month_day& ymd, const days& days) noexcept {
+  return year_month_day{ local_days{ ymd } - days };
+}
+
+inline constexpr void operator+=(year_month_day& ymd, const days& days) noexcept {
+  ymd = ymd + days;
+}
+
+inline constexpr void operator-=(year_month_day& ymd, const days& days) noexcept {
+  ymd = ymd - days;
+}
+
+}  // namespace date
+
+
+// ====================================================================================================================
+// Operators for Tests
+// ====================================================================================================================
+
+namespace date {
+
 template <dtz::ZonedTime ZonedTime, dtz::Duration FromDuration>
 [[nodiscard]] inline constexpr auto operator+(const ZonedTime& zt, const FromDuration& d) noexcept {
   using ToDuration = std::common_type_t<FromDuration, typename dtz::is_zoned_time<ZonedTime>::duration>;
@@ -59,7 +99,11 @@ template <dtz::ZonedTime ZonedTime, dtz::Duration FromDuration>
 
 }  // namespace date
 
-#if 1
+
+   // ====================================================================================================================
+// Tests
+// ====================================================================================================================
+
 TEST(dtz, concepts) {
   // Clock
   static_assert(dtz::Clock<dtz::system_clock>);
@@ -432,7 +476,6 @@ TEST(dtz, hms) {
   const auto sys = dtz::sys_days{ ymd };
   const auto utc = dtz::utc_clock::from_sys(sys);
   const auto tai = dtz::tai_clock::from_utc(utc);
-  const auto zon = dtz::make_zoned(dtz::locate_zone("Europe/Berlin"), loc + 0h);
 
   // template <ValidHHMMSSDuration FromValidHHMMSSDuration>
   // auto hms(const FromValidHHMMSSDuration& d)
@@ -511,32 +554,38 @@ TEST(dtz, hms) {
 
   static_assert(std::is_same_v<decltype(dtz::hms(dtz::gps_clock::from_utc(utc) + 90ms)), dtz::hh_mm_ss<dtz::milliseconds>>);
   static_assert(std::is_same_v<decltype(dtz::hms(dtz::gps_clock::from_utc(utc) + 90s)), dtz::hh_mm_ss<dtz::seconds>>);
-
-  // template <ValidHHMMSSDuration FromValidHHMMSSDuration>
-  // auto hms(const zoned_time<FromValidHHMMSSDuration>& zt)
-  static_assert(std::is_same_v<decltype(dtz::hms(zon + 90ms)), dtz::hh_mm_ss<dtz::milliseconds>>);
-  static_assert(std::is_same_v<decltype(dtz::hms(zon + 90s)), dtz::hh_mm_ss<dtz::seconds>>);
-  static_assert(std::is_same_v<decltype(dtz::hms(zon + 90min)), dtz::hh_mm_ss<dtz::minutes>>);
-  static_assert(std::is_same_v<decltype(dtz::hms(zon + 90h)), dtz::hh_mm_ss<dtz::hours>>);
-
-  EXPECT_EQ(dtz::hms(zon + 1h + 1min + 1s + 1ms).hours(), 1h);
-  EXPECT_EQ(dtz::hms(zon + 1h + 1min + 1s + 1ms).minutes(), 1min);
-  EXPECT_EQ(dtz::hms(zon + 1h + 1min + 1s + 1ms).seconds(), 1s);
-  EXPECT_EQ(dtz::hms(zon + 1h + 1min + 1s + 1ms).subseconds(), 1ms);
 }
 
-TEST(dtz, to_duration) {
-  static_assert(std::is_same_v<decltype(dtz::to_duration(dtz::hms(1h))), dtz::hours>);
-  static_assert(std::is_same_v<decltype(dtz::to_duration(dtz::hms(1min))), dtz::minutes>);
-  static_assert(std::is_same_v<decltype(dtz::to_duration(dtz::hms(1s))), dtz::seconds>);
-  static_assert(std::is_same_v<decltype(dtz::to_duration(dtz::hms(1ms))), dtz::milliseconds>);
-  static_assert(std::is_same_v<decltype(dtz::to_duration(dtz::hms(1ns))), dtz::nanoseconds>);
+TEST(dtz, tod) {
+  const auto ymd = dtz::year{ 1971 } / dtz::month{ 1 } / dtz::day{ 1 };
+  const auto loc = dtz::local_days{ ymd };
+  const auto sys = dtz::sys_days{ ymd };
 
-  EXPECT_EQ(dtz::to_duration(dtz::hms(dtz::days{ 1 } + 1h)), 24h + 1h);
-  EXPECT_EQ(dtz::to_duration(dtz::hms(dtz::days{ 1 } + 1min)), 24h + 1min);
-  EXPECT_EQ(dtz::to_duration(dtz::hms(dtz::days{ 1 } + 1s)), 24h + 1s);
-  EXPECT_EQ(dtz::to_duration(dtz::hms(dtz::days{ 1 } + 1ms)), 24h + 1ms);
-  EXPECT_EQ(dtz::to_duration(dtz::hms(dtz::days{ 1 } + 1ns)), 24h + 1ns);
+  // template <Duration FromDuration>
+  // auto tod(const hh_mm_ss<FromDuration>& hms)
+  static_assert(std::is_same_v<decltype(dtz::tod(dtz::hms(1h))), dtz::hours>);
+  static_assert(std::is_same_v<decltype(dtz::tod(dtz::hms(1min))), dtz::minutes>);
+  static_assert(std::is_same_v<decltype(dtz::tod(dtz::hms(1s))), dtz::seconds>);
+  static_assert(std::is_same_v<decltype(dtz::tod(dtz::hms(1ms))), dtz::milliseconds>);
+  static_assert(std::is_same_v<decltype(dtz::tod(dtz::hms(1ns))), dtz::nanoseconds>);
+
+  EXPECT_EQ(dtz::tod(dtz::hms(dtz::days{ 1 } + 1h)), 24h + 1h);
+  EXPECT_EQ(dtz::tod(dtz::hms(dtz::days{ 1 } + 1min)), 24h + 1min);
+  EXPECT_EQ(dtz::tod(dtz::hms(dtz::days{ 1 } + 1s)), 24h + 1s);
+  EXPECT_EQ(dtz::tod(dtz::hms(dtz::days{ 1 } + 1ms)), 24h + 1ms);
+  EXPECT_EQ(dtz::tod(dtz::hms(dtz::days{ 1 } + 1ns)), 24h + 1ns);
+
+  // template <ClockOrLocal FromClockOrLocal, ValidHHMMSSDuration FromValidHHMMSSDuration>
+  // auto tod(const time_point<FromClockOrLocal, FromValidHHMMSSDuration>& tp)
+  static_assert(std::is_same_v<decltype(dtz::tod(loc + 90ms)), dtz::milliseconds>);
+  static_assert(std::is_same_v<decltype(dtz::tod(loc + 90s)), dtz::seconds>);
+  static_assert(std::is_same_v<decltype(dtz::tod(loc + 90min)), dtz::minutes>);
+  static_assert(std::is_same_v<decltype(dtz::tod(loc + 90h)), dtz::hours>);
+
+  EXPECT_EQ(dtz::tod(loc + 1h + 1min + 1s + 1ms), 1h + 1min + 1s + 1ms);
+  EXPECT_EQ(dtz::tod(loc + 1h + 1min + 1s), 1h + 1min + 1s);
+  EXPECT_EQ(dtz::tod(loc + 1h + 1min), 1h + 1min);
+  EXPECT_EQ(dtz::tod(loc + 1h), 1h);
 }
 
 TEST(dtz, now) {
@@ -607,8 +656,8 @@ TEST(dtz, zoned_time_operators) {
     const auto hms = 1h + 30min;
     const auto zon = dtz::make_zoned("Europe/Berlin", dtz::local_days{ ymd } + hms, dtz::choose::earliest);
     EXPECT_EQ(zon.get_local_time() - dtz::make_zoned("UTC", zon.get_sys_time()).get_local_time(), 1h);
-    EXPECT_EQ(dtz::hms(zon + 1h).to_duration(), 3h + 30min);
-    EXPECT_EQ(dtz::hms((zon + 1h) - 1h).to_duration(), 1h + 30min);
+    EXPECT_EQ(dtz::tod(dtz::cast<dtz::local_t>(zon + 1h)), 3h + 30min);
+    EXPECT_EQ(dtz::tod(dtz::cast<dtz::local_t>((zon + 1h) - 1h)), 1h + 30min);
   }
   {
     const auto ymd = dtz::year{ 2018 } / dtz::month{ 10 } / dtz::day{ 28 };
@@ -616,10 +665,9 @@ TEST(dtz, zoned_time_operators) {
     const auto zon = dtz::make_zoned("Europe/Berlin", dtz::local_days{ ymd } + hms, dtz::choose::earliest);
     ASSERT_EQ(zon, dtz::make_zoned("Europe/Berlin", dtz::local_days{ ymd } + hms, dtz::choose::latest));
     EXPECT_EQ(zon.get_local_time() - dtz::make_zoned("UTC", zon.get_sys_time()).get_local_time(), 2h);
-    EXPECT_EQ(dtz::hms(zon + 1h).to_duration(), 2h + 30min);
-    EXPECT_EQ(dtz::hms(zon + 2h).to_duration(), 2h + 30min);
-    EXPECT_EQ(dtz::hms((zon + 1h) - 1h).to_duration(), 1h + 30min);
-    EXPECT_EQ(dtz::hms((zon + 2h) - 2h).to_duration(), 1h + 30min);
+    EXPECT_EQ(dtz::tod(dtz::cast<dtz::local_t>(zon + 1h)), 2h + 30min);
+    EXPECT_EQ(dtz::tod(dtz::cast<dtz::local_t>(zon + 2h)), 2h + 30min);
+    EXPECT_EQ(dtz::tod(dtz::cast<dtz::local_t>((zon + 1h) - 1h)), 1h + 30min);
+    EXPECT_EQ(dtz::tod(dtz::cast<dtz::local_t>((zon + 2h) - 2h)), 1h + 30min);
   }
 }
-#endif

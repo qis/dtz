@@ -477,15 +477,15 @@ template <ClockOrLocal FromClockOrLocal, ValidHHMMSSDuration FromValidHHMMSSDura
   return hh_mm_ss<FromValidHHMMSSDuration>{ tp - floor<days>(tp) };
 }
 
-template <ValidHHMMSSDuration FromValidHHMMSSDuration>
-[[nodiscard]] inline constexpr auto hms(const zoned_time<FromValidHHMMSSDuration>& zt) {
-  return hms(cast<FromValidHHMMSSDuration>(cast<local_t>(zt)));
-}
-
 
 template <Duration FromDuration>
-[[nodiscard]] inline constexpr auto to_duration(const hh_mm_ss<FromDuration>& hms) {
+[[nodiscard]] inline constexpr auto tod(const hh_mm_ss<FromDuration>& hms) {
   return cast<FromDuration>(hms.to_duration());
+}
+
+template <ClockOrLocal FromClockOrLocal, ValidHHMMSSDuration FromValidHHMMSSDuration>
+[[nodiscard]] inline constexpr auto tod(const time_point<FromClockOrLocal, FromValidHHMMSSDuration>& tp) {
+  return tp - floor<days>(tp);
 }
 
 

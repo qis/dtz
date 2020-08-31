@@ -144,11 +144,11 @@ namespace date {
   return year_month_day{ local_days{ ymd } - days };
 }
 
-[[nodiscard]] inline constexpr void operator+=(year_month_day& ymd, const days& days) noexcept {
+inline constexpr void operator+=(year_month_day& ymd, const days& days) noexcept {
   ymd = ymd + days;
 }
 
-[[nodiscard]] inline constexpr void operator-=(year_month_day& ymd, const days& days) noexcept {
+inline constexpr void operator-=(year_month_day& ymd, const days& days) noexcept {
   ymd = ymd - days;
 }
 
