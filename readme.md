@@ -104,9 +104,10 @@ template <dtz::HHMMSS LHS, dtz::HHMMSS RHS>
 </details>
 
 <details>
-<summary><b><code>dtz::year_month_day</code> and <code>dtz::hh_mm_ss</code> addition</b></summary>
+<summary><b><code>dtz::year_month_day</code> and <code>dtz::hh_mm_ss</code> addition and subtraction</b></summary>
 
-To enable addition of `dtz::year_month_day` and `dtz::time_of_day`, the following operators must be implemented in the `date` namespace:
+To enable addition and subtraction of `dtz::year_month_day` and `dtz::time_of_day`, the following operators
+must be implemented in the `date` namespace:
 
 ```cpp
 namespace date {
@@ -125,3 +126,23 @@ template <dtz::Duration Duration>
 ```
 
 </details>
+
+<details>
+<summary><b><code>dtz::year_month_day</code> and <code>dtz::days</code> addition and subtraction</b></summary>
+
+To enable addition and subtraction of `dtz::year_month_day` and `dtz::time_of_day`, the following operators
+must be implemented in the `date` namespace:
+
+```cpp
+namespace date {
+
+[[nodiscard]] inline constexpr auto operator+(const year_month_day& ymd, const days& days) noexcept {
+  return year_month_day{ local_days{ ymd } + days };
+}
+
+[[nodiscard]] inline constexpr auto operator-(const year_month_day& ymd, const days& days) noexcept {
+  return year_month_day{ local_days{ ymd } - days };
+}
+
+}  // namespace date
+```
