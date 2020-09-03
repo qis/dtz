@@ -8,7 +8,8 @@
 namespace dtz {
 
 template <Duration Duration>
-[[nodiscard]] inline Duration parse(std::string_view str, std::error_code& ec) noexcept {
+[[nodiscard]] inline Duration parse(std::string_view str, std::error_code& ec) noexcept
+{
   using Period = typename Duration::period;
 
   const char* beg = str.data();
@@ -23,7 +24,9 @@ template <Duration Duration>
 
   // Parse hours.
   hours::rep hv;  // NOLINT: Will be set by from_chars or not used on error.
-  if (const auto [cur, err] = std::from_chars(beg, end, hv); err != std::errc{} || cur == end || *cur != ':') {
+  if (const auto [cur, err] = std::from_chars(beg, end, hv);
+      err != std::errc{} || cur == end || *cur != ':')
+  {
     ec = std::make_error_code(errc::invalid_hours_format);
     return {};
   } else {
@@ -40,7 +43,8 @@ template <Duration Duration>
     if (size > 1) {
       // Parse minutes.
       minutes::rep mv;  // NOLINT: Will be set by from_chars or not used on error.
-      if (const auto [cur, err] = std::from_chars(beg, beg + 2, mv); err != std::errc{} || cur != beg + 2 || mv < 0 || mv > 59)
+      if (const auto [cur, err] = std::from_chars(beg, beg + 2, mv);
+          err != std::errc{} || cur != beg + 2 || mv < 0 || mv > 59)
       {
         ec = std::make_error_code(errc::invalid_minutes_format);
         return {};
@@ -81,7 +85,9 @@ template <Duration Duration>
             if (size > 6) {
               // Parse subseconds.
               int subseconds;  // NOLINT: Will be set by from_chars or not used on error.
-              if (const auto [cur, err] = std::from_chars(beg, end, subseconds); err != std::errc{} || subseconds < 0) {
+              if (const auto [cur, err] = std::from_chars(beg, end, subseconds);
+                  err != std::errc{} || subseconds < 0)
+              {
                 ec = std::make_error_code(err);
                 return {};
               } else if (cur != end) {
@@ -113,7 +119,8 @@ template <Duration Duration>
 }
 
 template <Duration Duration>
-[[nodiscard]] inline Duration parse(std::string_view str) {
+[[nodiscard]] inline Duration parse(std::string_view str)
+{
   std::error_code ec;
   const auto result = parse<Duration>(str, ec);
   if (ec) {
@@ -123,7 +130,8 @@ template <Duration Duration>
 }
 
 template <TimePointOrLocalTime TimePointOrLocalTime>
-[[nodiscard]] inline TimePointOrLocalTime parse(std::string_view str, std::error_code& ec) noexcept {
+[[nodiscard]] inline TimePointOrLocalTime parse(std::string_view str, std::error_code& ec) noexcept
+{
   // TODO: Allow 0000, 0000-00 and 0000-00-00 formats.
   // TODO: Use time_of_day instead of duration.
   using Duration = typename TimePointOrLocalTime::duration;
@@ -134,7 +142,9 @@ template <TimePointOrLocalTime TimePointOrLocalTime>
 
   // Parse year.
   int iy;  // NOLINT: Will be set by from_chars or not used on error.
-  if (const auto [cur, err] = std::from_chars(beg, end, iy); err != std::errc{} || cur == end || *cur != '-') {
+  if (const auto [cur, err] = std::from_chars(beg, end, iy);
+      err != std::errc{} || cur == end || *cur != '-')
+  {
     ec = std::make_error_code(errc::invalid_year_format);
     return {};
   } else {
@@ -191,7 +201,8 @@ template <TimePointOrLocalTime TimePointOrLocalTime>
   if constexpr (std::ratio_less_v<Period, hours::period>) {
     // Parse minutes.
     minutes::rep mv;  // NOLINT: Will be set by from_chars or not used on error.
-    if (const auto [cur, err] = std::from_chars(beg, beg + 2, mv); err != std::errc{} || cur != beg + 2 || mv < 0 || mv > 59)
+    if (const auto [cur, err] = std::from_chars(beg, beg + 2, mv);
+        err != std::errc{} || cur != beg + 2 || mv < 0 || mv > 59)
     {
       ec = std::make_error_code(errc::invalid_minutes_format);
       return {};
@@ -212,7 +223,8 @@ template <TimePointOrLocalTime TimePointOrLocalTime>
     if (size > 11) {
       // Parse seconds.
       seconds::rep sv;  // NOLINT: Will be set by from_chars or not used on error.
-      if (const auto [cur, err] = std::from_chars(beg, beg + 2, sv); err != std::errc{} || cur != beg + 2 || sv < 0 || sv > 60)
+      if (const auto [cur, err] = std::from_chars(beg, beg + 2, sv);
+          err != std::errc{} || cur != beg + 2 || sv < 0 || sv > 60)
       {
         ec = std::make_error_code(errc::invalid_seconds_format);
         return {};
@@ -232,7 +244,9 @@ template <TimePointOrLocalTime TimePointOrLocalTime>
         if (size > 14) {
           // Parse subseconds.
           int subseconds;  // NOLINT: Will be set by from_chars or not used on error.
-          if (const auto [cur, err] = std::from_chars(beg, end, subseconds); err != std::errc{} || subseconds < 0) {
+          if (const auto [cur, err] = std::from_chars(beg, end, subseconds);
+              err != std::errc{} || subseconds < 0)
+          {
             ec = std::make_error_code(err);
             return {};
           } else if (cur != end) {
@@ -262,7 +276,8 @@ template <TimePointOrLocalTime TimePointOrLocalTime>
 }
 
 template <TimePointOrLocalTime TimePointOrLocalTime>
-[[nodiscard]] inline TimePointOrLocalTime parse(std::string_view str) {
+[[nodiscard]] inline TimePointOrLocalTime parse(std::string_view str)
+{
   std::error_code ec;
   const auto result = parse<TimePointOrLocalTime>(str, ec);
   if (ec) {

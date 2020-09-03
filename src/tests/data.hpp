@@ -12,10 +12,12 @@ using namespace dtz::literals;
 // ====================================================================================================================
 
 template <typename Rep, typename Period>
-struct format_duration_data {};
+struct format_duration_data
+{};
 
 template <>
-struct format_duration_data<dtz::nanoseconds::rep, dtz::nanoseconds::period> {
+struct format_duration_data<dtz::nanoseconds::rep, dtz::nanoseconds::period>
+{
   using duration = dtz::duration<dtz::nanoseconds::rep, dtz::nanoseconds::period>;
   static inline const std::vector<std::pair<std::string, duration>> value = {
     { "00:00:00.000000001", duration{ 1 } },
@@ -42,7 +44,8 @@ struct format_duration_data<dtz::nanoseconds::rep, dtz::nanoseconds::period> {
 };
 
 template <>
-struct format_duration_data<dtz::microseconds::rep, dtz::microseconds::period> {
+struct format_duration_data<dtz::microseconds::rep, dtz::microseconds::period>
+{
   using duration = dtz::duration<dtz::microseconds::rep, dtz::microseconds::period>;
   static inline const std::vector<std::pair<std::string, duration>> value = {
     { "00:00:00.000001", duration{ 1 } },
@@ -67,7 +70,8 @@ struct format_duration_data<dtz::microseconds::rep, dtz::microseconds::period> {
 };
 
 template <>
-struct format_duration_data<dtz::milliseconds::rep, dtz::milliseconds::period> {
+struct format_duration_data<dtz::milliseconds::rep, dtz::milliseconds::period>
+{
   using duration = dtz::duration<dtz::milliseconds::rep, dtz::milliseconds::period>;
   static inline const std::vector<std::pair<std::string, duration>> value = {
     { "00:00:00.001", duration{ 1 } },
@@ -90,7 +94,8 @@ struct format_duration_data<dtz::milliseconds::rep, dtz::milliseconds::period> {
 };
 
 template <>
-struct format_duration_data<dtz::seconds::rep, dtz::seconds::period> {
+struct format_duration_data<dtz::seconds::rep, dtz::seconds::period>
+{
   using duration = dtz::duration<dtz::seconds::rep, dtz::seconds::period>;
   static inline const std::vector<std::pair<std::string, duration>> value = {
     { "00:00:01", duration{ 1 } },
@@ -111,7 +116,8 @@ struct format_duration_data<dtz::seconds::rep, dtz::seconds::period> {
 };
 
 template <>
-struct format_duration_data<dtz::minutes::rep, dtz::minutes::period> {
+struct format_duration_data<dtz::minutes::rep, dtz::minutes::period>
+{
   using duration = dtz::duration<dtz::minutes::rep, dtz::minutes::period>;
   static inline const std::vector<std::pair<std::string, duration>> value = {
     { "00:01", duration{ 1 } },
@@ -130,7 +136,8 @@ struct format_duration_data<dtz::minutes::rep, dtz::minutes::period> {
 };
 
 template <>
-struct format_duration_data<dtz::hours::rep, dtz::hours::period> {
+struct format_duration_data<dtz::hours::rep, dtz::hours::period>
+{
   using duration = dtz::duration<dtz::hours::rep, dtz::hours::period>;
   static inline const std::vector<std::pair<std::string, duration>> value = {
     { "01:00", duration{ 1 } },
@@ -147,7 +154,8 @@ struct format_duration_data<dtz::hours::rep, dtz::hours::period> {
 };
 
 template <>
-struct format_duration_data<dtz::days::rep, dtz::days::period> {
+struct format_duration_data<dtz::days::rep, dtz::days::period>
+{
   using duration = dtz::duration<dtz::days::rep, dtz::days::period>;
   static inline const std::vector<std::pair<std::string, duration>> value = {
     { "24:00", duration{ 1 } },
@@ -162,7 +170,8 @@ struct format_duration_data<dtz::days::rep, dtz::days::period> {
 };
 
 template <>
-struct format_duration_data<dtz::weeks::rep, dtz::weeks::period> {
+struct format_duration_data<dtz::weeks::rep, dtz::weeks::period>
+{
   using duration = dtz::duration<dtz::weeks::rep, dtz::weeks::period>;
   static inline const std::vector<std::pair<std::string, duration>> value = {
     { "168:00", duration{ 1 } },
@@ -175,7 +184,8 @@ struct format_duration_data<dtz::weeks::rep, dtz::weeks::period> {
 };
 
 template <>
-struct format_duration_data<dtz::months::rep, dtz::months::period> {
+struct format_duration_data<dtz::months::rep, dtz::months::period>
+{
   using duration = dtz::duration<dtz::months::rep, dtz::months::period>;
   static inline const std::vector<std::pair<std::string, duration>> value = {
     { "730:00", duration{ 1 } },
@@ -186,7 +196,8 @@ struct format_duration_data<dtz::months::rep, dtz::months::period> {
 };
 
 template <>
-struct format_duration_data<dtz::years::rep, dtz::years::period> {
+struct format_duration_data<dtz::years::rep, dtz::years::period>
+{
   using duration = dtz::duration<dtz::years::rep, dtz::years::period>;
   static inline const std::vector<std::pair<std::string, duration>> value = {
     { "8765:00", duration{ 1 } },
@@ -199,45 +210,55 @@ struct format_duration_data<dtz::years::rep, dtz::years::period> {
 // ====================================================================================================================
 
 template <dtz::Duration Duration>
-struct format_time_point_data {};
+struct format_time_point_data
+{};
 
 template <>
-struct format_time_point_data<dtz::nanoseconds> {
+struct format_time_point_data<dtz::nanoseconds>
+{
   using time_point = dtz::local_time<dtz::nanoseconds>;
   static inline const std::vector<std::pair<std::string, time_point>> value = {
-    { "2020-01-01 01:01:02.003004005", dtz::local_days{ 2020_y / 1 / 1 } + 1h + 1min + 2s + 3ms + 4us + 5ns },
+    { "2020-01-01 01:01:02.003004005",
+      dtz::local_days{ 2020_y / 1 / 1 } + 1h + 1min + 2s + 3ms + 4us + 5ns },
   };
 };
 
 template <>
-struct format_time_point_data<dtz::microseconds> {
+struct format_time_point_data<dtz::microseconds>
+{
   using time_point = dtz::local_time<dtz::microseconds>;
   static inline const std::vector<std::pair<std::string, time_point>> value = {
     { "2020-01-01 01:01:02.003004", dtz::local_days{ 2020_y / 1 / 1 } + 1h + 1min + 2s + 3ms + 4us },
-    { "-0001-01-01 01:01:02.003004", dtz::local_days{ (2020_y / 1 / 1) - dtz::years{ 2021 } } + 1h + 1min + 2s + 3ms + 4us },
+    { "-0001-01-01 01:01:02.003004",
+      dtz::local_days{ (2020_y / 1 / 1) - dtz::years{ 2021 } } + 1h + 1min + 2s + 3ms + 4us },
   };
 };
 
 template <>
-struct format_time_point_data<dtz::milliseconds> {
+struct format_time_point_data<dtz::milliseconds>
+{
   using time_point = dtz::local_time<dtz::milliseconds>;
   static inline const std::vector<std::pair<std::string, time_point>> value = {
     { "2020-01-01 01:01:02.003", dtz::local_days{ 2020_y / 1 / 1 } + 1h + 1min + 2s + 3ms },
-    { "-0001-01-01 01:01:02.003", dtz::local_days{ (2020_y / 1 / 1) - dtz::years{ 2021 } } + 1h + 1min + 2s + 3ms },
+    { "-0001-01-01 01:01:02.003",
+      dtz::local_days{ (2020_y / 1 / 1) - dtz::years{ 2021 } } + 1h + 1min + 2s + 3ms },
   };
 };
 
 template <>
-struct format_time_point_data<dtz::seconds> {
+struct format_time_point_data<dtz::seconds>
+{
   using time_point = dtz::local_time<dtz::seconds>;
   static inline const std::vector<std::pair<std::string, time_point>> value = {
     { "2020-01-01 01:01:02", dtz::local_days{ 2020_y / 1 / 1 } + 1h + 1min + 2s },
-    { "-0001-01-01 01:01:02", dtz::local_days{ (2020_y / 1 / 1) - dtz::years{ 2021 } } + 1h + 1min + 2s },
+    { "-0001-01-01 01:01:02",
+      dtz::local_days{ (2020_y / 1 / 1) - dtz::years{ 2021 } } + 1h + 1min + 2s },
   };
 };
 
 template <>
-struct format_time_point_data<dtz::minutes> {
+struct format_time_point_data<dtz::minutes>
+{
   using time_point = dtz::local_time<dtz::minutes>;
   static inline const std::vector<std::pair<std::string, time_point>> value = {
     { "2020-01-01 01:01", dtz::local_days{ 2020_y / 1 / 1 } + 1h + 1min },
@@ -246,7 +267,8 @@ struct format_time_point_data<dtz::minutes> {
 };
 
 template <>
-struct format_time_point_data<dtz::hours> {
+struct format_time_point_data<dtz::hours>
+{
   using time_point = dtz::local_time<dtz::hours>;
   static inline const std::vector<std::pair<std::string, time_point>> value = {
     { "2020-01-01 01:00", dtz::local_days{ 2020_y / 1 / 1 } + 1h },
@@ -255,7 +277,8 @@ struct format_time_point_data<dtz::hours> {
 };
 
 template <>
-struct format_time_point_data<dtz::days> {
+struct format_time_point_data<dtz::days>
+{
   using time_point = dtz::local_time<dtz::days>;
   static inline const std::vector<std::pair<std::string, time_point>> value = {
     { "2020-01-01", dtz::local_days{ 2020_y / 1 / 1 } },
@@ -264,7 +287,8 @@ struct format_time_point_data<dtz::days> {
 };
 
 template <>
-struct format_time_point_data<dtz::weeks> {
+struct format_time_point_data<dtz::weeks>
+{
   using time_point = dtz::local_time<dtz::weeks>;
   static inline const std::vector<std::pair<std::string, time_point>> value = {
     { "2019-12-26", dtz::cast<dtz::weeks>(dtz::local_days{ 2020_y / 1 / 1 }) },
@@ -273,19 +297,23 @@ struct format_time_point_data<dtz::weeks> {
 };
 
 template <>
-struct format_time_point_data<dtz::fpmonths<float>> {
+struct format_time_point_data<dtz::fpmonths<float>>
+{
   using time_point = dtz::local_time<dtz::fpmonths<float>>;
   static inline const std::vector<std::pair<std::string, time_point>> value = {
     { "2020-06-15", dtz::cast<dtz::fpmonths<float>>(dtz::local_days{ 2020_y / 6 / 15 }) },
-    { "-0001-06-15", dtz::cast<dtz::fpmonths<float>>(dtz::local_days{ (2020_y / 6 / 15) - dtz::years{ 2021 } }) },
+    { "-0001-06-15",
+      dtz::cast<dtz::fpmonths<float>>(dtz::local_days{ (2020_y / 6 / 15) - dtz::years{ 2021 } }) },
   };
 };
 
 template <>
-struct format_time_point_data<dtz::fpyears<float>> {
+struct format_time_point_data<dtz::fpyears<float>>
+{
   using time_point = dtz::local_time<dtz::fpyears<float>>;
   static inline const std::vector<std::pair<std::string, time_point>> value = {
     { "2020-06-15", dtz::cast<dtz::fpyears<float>>(dtz::local_days{ 2020_y / 6 / 15 }) },
-    { "-0001-06-15", dtz::cast<dtz::fpyears<float>>(dtz::local_days{ (2020_y / 6 / 15) - dtz::years{ 2021 } }) },
+    { "-0001-06-15",
+      dtz::cast<dtz::fpyears<float>>(dtz::local_days{ (2020_y / 6 / 15) - dtz::years{ 2021 } }) },
   };
 };

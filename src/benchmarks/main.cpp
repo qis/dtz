@@ -4,7 +4,8 @@
 
 #include <fmt/format.h>
 
-static void dtz_format_to_memory_buffer(benchmark::State& state) {
+static void dtz_format_to_memory_buffer(benchmark::State& state)
+{
   int value = 33;
   fmt::basic_memory_buffer<char, 32> buffer;
   for (auto _ : state) {
@@ -15,7 +16,8 @@ static void dtz_format_to_memory_buffer(benchmark::State& state) {
 }
 BENCHMARK(dtz_format_to_memory_buffer);
 
-static void dtz_format_to_back_insert_iterator(benchmark::State& state) {
+static void dtz_format_to_back_insert_iterator(benchmark::State& state)
+{
   int value = 33;
   std::string buffer;
   buffer.reserve(32);
@@ -28,7 +30,8 @@ static void dtz_format_to_back_insert_iterator(benchmark::State& state) {
 }
 BENCHMARK(dtz_format_to_back_insert_iterator);
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
   dtz::initialize();
   benchmark::Initialize(&argc, argv);
   if (benchmark::ReportUnrecognizedArguments(argc, argv)) {

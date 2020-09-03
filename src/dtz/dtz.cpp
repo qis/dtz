@@ -5,16 +5,18 @@
 #include <cstdlib>
 
 #ifdef _WIN32
-#include <windows.h>
+#  include <windows.h>
 #endif
 
 namespace dtz {
 
-const char* error::name() const noexcept {
+const char* error::name() const noexcept
+{
   return "dtz error";
 }
 
-std::string error::message(int ev) const {
+std::string error::message(int ev) const
+{
   switch (static_cast<errc>(ev)) {
   case errc::invalid_format:
     return "invalid format";
@@ -40,13 +42,15 @@ std::string error::message(int ev) const {
 
 const error error_instance;
 
-const error& error_category() noexcept {
+const error& error_category() noexcept
+{
   return error_instance;
 }
 
 #ifdef _WIN32
 
-void initialize(const std::filesystem::path& tzdata, std::error_code& ec) noexcept {
+void initialize(const std::filesystem::path& tzdata, std::error_code& ec) noexcept
+{
   ec.clear();
   if (!std::filesystem::is_directory(tzdata)) {
     ec = std::make_error_code(std::errc::no_such_file_or_directory);
@@ -63,7 +67,8 @@ void initialize(const std::filesystem::path& tzdata, std::error_code& ec) noexce
   }
 }
 
-void initialize(const std::filesystem::path& tzdata) {
+void initialize(const std::filesystem::path& tzdata)
+{
   std::error_code ec;
   initialize(tzdata, ec);
   if (ec) {
@@ -71,7 +76,8 @@ void initialize(const std::filesystem::path& tzdata) {
   }
 }
 
-void initialize(std::error_code& ec) noexcept {
+void initialize(std::error_code& ec) noexcept
+{
   ec.clear();
   std::string executable;
   DWORD size = 0;
@@ -97,7 +103,8 @@ void initialize(std::error_code& ec) noexcept {
   initialize(tzdata, ec);
 }
 
-void initialize() {
+void initialize()
+{
   std::error_code ec;
   initialize(ec);
   if (ec) {
@@ -107,13 +114,15 @@ void initialize() {
 
 #else
 
-void initialize(const std::filesystem::path& tzdata, std::error_code& ec) noexcept {
+void initialize(const std::filesystem::path& tzdata, std::error_code& ec) noexcept
+{
   ec.clear();
 }
 
 void initialize(const std::filesystem::path& tzdata) {}
 
-void initialize(std::error_code& ec) noexcept {
+void initialize(std::error_code& ec) noexcept
+{
   ec.clear();
 }
 

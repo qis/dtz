@@ -1,24 +1,28 @@
 #include "data.hpp"
-#include <dtz/format.hpp>
 #include <gtest/gtest.h>
+#include <dtz/format.hpp>
 
 template <dtz::Duration Duration>
-bool format_duration_test(const std::string& expect, const Duration& d) {
+bool format_duration_test(const std::string& expect, const Duration& d)
+{
   const auto str = fmt::format("{}", d);
   EXPECT_EQ(expect, str);
   return expect == str;
 }
 
 template <dtz::Duration Duration>
-bool format_duration_test() {
+bool format_duration_test()
+{
   bool success = true;
-  for (const auto& e : format_duration_data<typename Duration::rep, typename Duration::period>::value) {
+  for (const auto& e : format_duration_data<typename Duration::rep, typename Duration::period>::value)
+  {
     success &= format_duration_test(e.first, e.second);
   }
   return success;
 }
 
-TEST(dtz, format_duration) {
+TEST(dtz, format_duration)
+{
   EXPECT_TRUE(format_duration_test<dtz::nanoseconds>());
   EXPECT_TRUE(format_duration_test<dtz::microseconds>());
   EXPECT_TRUE(format_duration_test<dtz::milliseconds>());
@@ -42,7 +46,8 @@ TEST(dtz, format_duration) {
 }
 
 template <dtz::Duration Duration>
-bool format_time_point_test() {
+bool format_time_point_test()
+{
   bool success = true;
   for (const auto& e : format_time_point_data<Duration>::value) {
     const auto str = fmt::format("{}", e.second);
@@ -52,7 +57,8 @@ bool format_time_point_test() {
   return success;
 }
 
-TEST(dtz, format_time_point) {
+TEST(dtz, format_time_point)
+{
   EXPECT_TRUE(format_time_point_test<dtz::nanoseconds>());
   EXPECT_TRUE(format_time_point_test<dtz::microseconds>());
   EXPECT_TRUE(format_time_point_test<dtz::milliseconds>());

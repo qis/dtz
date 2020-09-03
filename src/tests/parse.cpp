@@ -1,25 +1,29 @@
 #include "data.hpp"
+#include <gtest/gtest.h>
 #include <dtz/format.hpp>
 #include <dtz/parse.hpp>
-#include <gtest/gtest.h>
 
 template <dtz::Duration Duration>
-bool parse_duration_test(const std::string& s, const Duration& d) {
+bool parse_duration_test(const std::string& s, const Duration& d)
+{
   const auto v = dtz::parse<Duration>(s);
   EXPECT_EQ(s, dtz::format(v));
   return v == d;
 }
 
 template <dtz::Duration Duration>
-bool parse_duration_test() {
+bool parse_duration_test()
+{
   bool success = true;
-  for (const auto& e : format_duration_data<typename Duration::rep, typename Duration::period>::value) {
+  for (const auto& e : format_duration_data<typename Duration::rep, typename Duration::period>::value)
+  {
     success &= parse_duration_test(e.first, e.second);
   }
   return success;
 }
 
-TEST(dtz, parse_duration) {
+TEST(dtz, parse_duration)
+{
   EXPECT_TRUE(parse_duration_test<dtz::nanoseconds>());
   EXPECT_TRUE(parse_duration_test<dtz::microseconds>());
   EXPECT_TRUE(parse_duration_test<dtz::milliseconds>());

@@ -16,7 +16,8 @@ enum class errc {
   tzdata_load_error,
 };
 
-class error : public std::error_category {
+class error : public std::error_category
+{
 public:
   const char* name() const noexcept override;
   std::string message(int ev) const override;
@@ -29,9 +30,11 @@ const error& error_category() noexcept;
 namespace std {
 
 template <>
-struct is_error_code_enum<dtz::errc> : true_type {};
+struct is_error_code_enum<dtz::errc> : true_type
+{};
 
-inline error_code make_error_code(dtz::errc ev) noexcept {
+inline error_code make_error_code(dtz::errc ev) noexcept
+{
   return { static_cast<int>(ev), dtz::error_category() };
 }
 
