@@ -114,8 +114,7 @@ inline constexpr auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const
 }
 
 template <std::size_t SIZE, Duration Duration>
-inline constexpr auto
-format_to(fmt::basic_memory_buffer<char, SIZE>& out, const hh_mm_ss<Duration>& hms)
+inline constexpr auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const hh_mm_ss<Duration>& hms)
 {
   return format_to(out, cast<Duration>(hms));
 }
@@ -189,8 +188,7 @@ inline constexpr auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const
 }
 
 template <std::size_t SIZE>
-inline constexpr auto
-format_to(fmt::basic_memory_buffer<char, SIZE>& out, const month_weekday_last& mwdl)
+inline constexpr auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const month_weekday_last& mwdl)
 {
   format_to(out, mwdl.month());
   out.push_back('/');
@@ -215,8 +213,7 @@ inline constexpr auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const
 }
 
 template <std::size_t SIZE>
-inline constexpr auto
-format_to(fmt::basic_memory_buffer<char, SIZE>& out, const year_month_day_last& ymdl)
+inline constexpr auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const year_month_day_last& ymdl)
 {
   constexpr const char* s = "/last";
   format_to(out, ymdl.year() / ymdl.month());
@@ -225,8 +222,7 @@ format_to(fmt::basic_memory_buffer<char, SIZE>& out, const year_month_day_last& 
 }
 
 template <std::size_t SIZE>
-inline constexpr auto
-format_to(fmt::basic_memory_buffer<char, SIZE>& out, const year_month_weekday& ymwd)
+inline constexpr auto format_to(fmt::basic_memory_buffer<char, SIZE>& out, const year_month_weekday& ymwd)
 {
   format_to(out, ymwd.year() / ymwd.month());
   out.push_back('/');
@@ -235,8 +231,9 @@ format_to(fmt::basic_memory_buffer<char, SIZE>& out, const year_month_weekday& y
 }
 
 template <std::size_t SIZE>
-inline constexpr auto
-format_to(fmt::basic_memory_buffer<char, SIZE>& out, const year_month_weekday_last& ymwdl)
+inline constexpr auto format_to(
+  fmt::basic_memory_buffer<char, SIZE>& out,
+  const year_month_weekday_last& ymwdl)
 {
   format_to(out, ymwdl.year() / ymwdl.month());
   out.push_back('/');
