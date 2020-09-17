@@ -1,6 +1,6 @@
-find_package(tzd CONFIG REQUIRED)
-target_link_libraries(main PRIVATE tzd::tzd)
+    find_package(tzd CONFIG REQUIRED)
+    target_link_libraries(main PRIVATE tzd::tzd)
 
-if(WIN32)
-  install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tzdata DESTINATION share)
-endif()
+    if(WIN32)
+      install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tzdata DESTINATION share)
+    endif()
