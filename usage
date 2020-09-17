@@ -1,5 +1,7 @@
-    find_package(tzd CONFIG REQUIRED)
-    target_link_libraries(main PRIVATE tzd::tzd)
+The package dtz provides CMake targets:
+
+    find_package(dtz CONFIG REQUIRED)
+    target_link_libraries(main PRIVATE dtz::dtz)
 
     if(WIN32)
       install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tzdata DESTINATION share)
